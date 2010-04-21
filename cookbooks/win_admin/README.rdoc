@@ -1,0 +1,14 @@
+= DESCRIPTION:
+
+Windows admin recipes.
+
+= ATTRIBUTES: 
+
+See metadata.rb
+
+= USAGE:
+
+Designed to be run within a RightScale ServerTemplate
+
+Boot Scripts
+  * change_admin_password - Changes the administrator password

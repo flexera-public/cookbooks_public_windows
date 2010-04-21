@@ -1,0 +1,39 @@
+{
+  "version": "0.0.5",
+  "conflicting": {
+
+  },
+  "recipes": {
+    "sys_monitoring::default": "Install monitoring plugin",
+    "sys_monitoring": ""
+  },
+  "providing": {
+    "sys_monitoring": [
+
+    ]
+  },
+  "long_description": "= DESCRIPTION:\n\nEnable monitoring\n\n= USAGE:\n\nAdd to ServerTemplate to enable monitoring on instances using it.",
+  "description": "Send collectd data to RightScale",
+  "name": "sys_monitoring",
+  "attributes": {
+
+  },
+  "replacing": {
+
+  },
+  "dependencies": {
+
+  },
+  "maintainer": "RightScale, Inc.",
+  "recommendations": {
+
+  },
+  "platforms": {
+
+  },
+  "maintainer_email": "support@rightscale.com",
+  "suggestions": {
+
+  },
+  "license": "Copyright (c) 2009 RightScale, Inc.\n\nAll rights reserved - Do Not Redistribute\n"
+}

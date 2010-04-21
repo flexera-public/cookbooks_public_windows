@@ -1,0 +1,265 @@
+#
+# Copyright (c) 2009 RightScale Inc
+#
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to
+# the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+require 'rubygems'
+require 'rubygems/dependency_installer'
+require 'logger'
+require 'eventmachine'
+require 'fileutils'
+require 'win32ole'
+require File.join(File.dirname(__FILE__), '..', '..', 'Sandbox', 'right_link', 'config', 'platform')
+
+module RightScale
+
+  class WindowsMonitor
+
+    RS_HOST_PORT      = 3011 # RightScale collectd server port
+    SAMPLING_INTERVAL = 10   # Interval in seconds between two sampling
+    MAX_EXCEPTIONS    = 3    # Maximum number of exceptions before aborting monitoring
+    EXCEPTIONS_EXPIRY = 60   # Number of seconds after which exceptions counter gets reset
+    TEMP_DIR          = File.join(ENV['TEMP'], 'RightScale')
+    PID_FILE          = File.join(TEMP_DIR, 'monitoring.pid')
+
+    # Check whether monitoring is already running and if not start it
+    def self.start
+      begin
+        if File.exists?(PID_FILE)
+          pid = IO.read(PID_FILE).to_i rescue -1
+          alive = Process.kill(0, pid) && true rescue false
+          return if alive
+          File.delete(PID_FILE)
+        end
+        unless File.exists?(PID_FILE)
+          FileUtils.mkdir_p(TEMP_DIR)
+          File.open(PID_FILE, 'w') { |f| f.print Process.pid }
+          mon = WindowsMonitor.new
+          mon.start
+        end
+      rescue Exception => e
+        File.open(File.join(TEMP_DIR, 'monitoring_errors.log'), 'a') { |f| f.puts "Monitoring plugin failed to start with '#{e.message}'" }
+        puts "Monitoring failed with #{e.message} from #{e.backtrace.join("\n")}"
+        raise e
+      end
+    end
+
+    # Stop monitoring if it's running
+    # Delete pid file, running process will realize it's gone and exit
+    def self.stop
+      File.delete(PID_FILE) if File.exists?(PID_FILE)
+      sleep 1
+    end
+
+    # Start monitoring, do nothing if already monitoring
+    #
+    # === Return
+    # Does not return unless more than MAX_EXCEPTIONS exception get raised in
+    # less than EXCEPTIONS_EXPIRY seconds
+    #
+    # === Raise
+    # Exception:: If user data is missing
+    def start
+      unless EM.reactor_running?
+        # Workaround until we don't need to use the collectd gem anymore
+        Gem::DependencyInstaller.new.install('collectd') unless Gem.available?('collectd')
+        Gem.refresh
+        require 'collectd'
+        @wmi = WIN32OLE.connect('winmgmts://')
+        @iteration = 0
+        log_file = File.join(TEMP_DIR, 'monitoring.log')
+        @logger = Logger.new(log_file)
+        @logger.level = Logger::INFO
+        require File.join(RightScale::Platform.filesystem.spool_dir, 'ec2', 'user-data')
+        Collectd::add_server(SAMPLING_INTERVAL, addr = ENV['RS_SKETCHY'], port = RS_HOST_PORT)
+        Collectd::hostname = '<%= @node[:rightscale][:instance_uuid] %>'
+        @logger.info('Windows monitoring starting')
+        next_run = Time.now.to_f + SAMPLING_INTERVAL
+        EM.run do
+          EM.add_periodic_timer(0.5) { stop unless File.exists?(PID_FILE) }
+          EM.add_periodic_timer(0.1) do
+            time_left = (next_run - Time.now.to_f)
+            if time_left <= 0
+              next_run = Time.now.to_f + SAMPLING_INTERVAL
+              run_once
+            end
+          end
+        end
+        @logger.info('Windows monitoring stopping')
+      end
+      true
+    end
+
+    # Stop monitoring, do nothing if not monitoring
+    #
+    # === Return
+    # true:: Always return true
+    def stop
+      EM.stop if EM.reactor_running?
+      true
+    end
+
+    protected
+
+    # Single monitoring iteration
+    #
+    # === Return
+    # true:: Always return true
+    def run_once
+      @iteration += 1
+      send_cpu_load
+      send_memory_usage
+      send_disk_usage
+    end
+
+    # Collect and send CPU load information
+    #
+    # === Return
+    # true:: Always return true
+    def send_cpu_load
+      @values_idle ||= []
+      @values_user ||= []
+      @last_tick_times ||= []
+      begin
+        cpus = @wmi.execquery("Select DeviceId,LoadPercentage from Win32_Processor")
+        for cpu in cpus do
+          if cpu.deviceid =~ /^CPU(\d+)$/i
+            cpu_id = $1.to_i
+            if @iteration == 1 || @values_idle[cpu_id] > 4290000000 || @values_user[cpu_id] > 4290000000
+              @values_idle[cpu_id] = 0
+              @values_user[cpu_id] = 0
+              @last_tick_times[cpu_id] = nil
+            end
+            load_val = cpu.LoadPercentage
+            if is_number?(load_val)
+              load = load_val.to_i
+              Collectd.cpu(cpu_id.to_s).cpu('idle').counter = @values_idle[cpu_id]
+              Collectd.cpu(cpu_id.to_s).cpu('user').counter = @values_user[cpu_id]
+              @logger.debug("Sending CPU(#{cpu_id}) idle(#{@values_idle[cpu_id]}) user(#{@values_user[cpu_id]}) load=#{load_val}")
+              now = Time.new
+              if (last = @last_tick_times[cpu_id])
+                delta = (now - last).to_i
+                @values_idle[cpu_id] += delta * (100 - load)
+                @values_user[cpu_id] += delta * load
+              end
+              @last_tick_times[cpu_id] = now
+            end
+          end
+        end
+      rescue Exception => e
+        handle_exception('CPU', e)
+      end
+      true
+    end
+
+
+    # Collect and send memory usage
+    #
+    # === Return
+    # true:: Always return true
+    def send_memory_usage
+      begin
+        memory = @wmi.execquery("Select FreePhysicalMemory from Win32_OperatingSystem")
+        for mem in memory do
+          # value returned in kbyte
+          free_mem_val = mem.FreePhysicalMemory
+          if is_number?(free_mem_val)
+            free_mem = free_mem_val.to_i * 1024
+            @logger.debug("Sending FreePhysicalMemory: #{free_mem}")
+            Collectd.memory('').memory('free').gauge = free_mem
+          end
+        end
+      rescue Exception => e
+        handle_exception('Memory', e)
+      end
+      true
+    end
+
+    # Collect and send disk usage
+    #
+    # === Return
+    # true:: Always return true
+    def send_disk_usage
+      begin
+        drives = @wmi.ExecQuery("Select deviceid, freespace, size from win32_logicaldisk")
+        for drive in drives do
+          if drive.deviceid =~ /^(\w):$/
+            drive_letter = $1
+            free_space_val = drive.freespace
+            drive_size_val = drive.size
+            if is_number?(free_space_val) && is_number?(drive_size_val)
+              used_space = drive_size_val.to_i - free_space_val.to_i
+              @logger.debug("Drive #{drive_letter}: has #{free_space_val} free and #{used_space} used space")
+              Collectd.df('').df("drive_#{drive_letter}").gauge = [ used_space, free_space_val.to_i ]
+            end
+          end
+        end
+      rescue Exception => e
+        handle_exception('Disk', e)
+      end
+      true
+    end
+
+    # Handle given exception
+    # Stop monitoring if more than 3 exceptions occur in less than 1 minute
+    #
+    # === Parameters
+    # title(String):: Title used for logging
+    # e(Exception):: Exception being handled
+    #
+    # === Return
+    # true:: Always return true
+    def handle_exception(title, e)
+      @logger.error("#{title} monitoring failed with #{e.message} from #{e.backtrace.join("\n")}")
+      @exceptions_count ||= 0
+      @exceptions_count += 1
+      if @exceptions_count > MAX_EXCEPTIONS
+        stop
+      else
+        @expiry_timer.cancel if @expiry_timer
+        @expiry_timer = EM::Timer.new(EXCEPTIONS_EXPIRY) { @exceptions_count = 0; @expiry_timer = nil }
+      end
+      true
+    end
+
+    # Does given object represent a number?
+    # i.e. can o.to_i be safely called
+    #
+    # === Parameters
+    # o(Object):: Object to be tested
+    #
+    # === Return
+    # true:: If o is a number
+    # false:: Otherwise
+    def is_number?(o)
+      res = o && !!o.to_s.match(/\A[+-]?\d+?(\.\d+)?\Z/)
+    end
+
+  end
+
+end
+
+if ARGV[0] == '--start'
+  RightScale::WindowsMonitor.start
+elsif ARGV[0] == '--shutdown'
+  RightScale::WindowsMonitor.stop
+else
+  puts 'Usage: ruby monitoring.rb --start|--shutdown'
+end

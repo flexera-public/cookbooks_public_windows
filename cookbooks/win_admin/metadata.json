@@ -1,0 +1,52 @@
+{
+  "version": "0.0.2",
+  "conflicting": {
+
+  },
+  "recipes": {
+    "win_admin": "",
+    "win_admin::change_admin_password": "Changes the administrator password",
+    "win_admin::default": "Not yet implemented"
+  },
+  "providing": {
+    "win_admin": [
+
+    ],
+    "win_admin::change_admin_password": [
+
+    ]
+  },
+  "long_description": "= DESCRIPTION:\n\nWindows admin recipes.\n\n= REQUIREMENTS:\n\n\n= ATTRIBUTES: \n\nSee metadata.rb\n\n= USAGE:\n\nDesigned to be run within a RightScale ServerTemplate",
+  "description": "Windows Admin",
+  "name": "win_admin",
+  "attributes": {
+    "win_admin\/admin_password": {
+      "type": "string",
+      "multiple_values": false,
+      "description": "New administrator password",
+      "display_name": "New administrator password",
+      "required": false,
+      "recipes": [
+        "win_admin::change_admin_password"
+      ]
+    }
+  },
+  "replacing": {
+
+  },
+  "dependencies": {
+
+  },
+  "maintainer": "RightScale, Inc.",
+  "recommendations": {
+
+  },
+  "platforms": {
+
+  },
+  "maintainer_email": "alex@rightscale.com",
+  "suggestions": {
+
+  },
+  "license": "Copyright (c) 2009 RightScale, Inc.\n\nAll rights reserved - Do Not Redistribute\n"
+}

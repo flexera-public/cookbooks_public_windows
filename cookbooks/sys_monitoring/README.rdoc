@@ -1,0 +1,10 @@
+= DESCRIPTION:
+
+Enable monitoring
+
+= USAGE:
+
+Add to ServerTemplate to enable monitoring on instances using it.
+
+Boot Scripts
+  * default - Install monitoring plugin

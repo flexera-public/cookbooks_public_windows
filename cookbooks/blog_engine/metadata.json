@@ -1,0 +1,115 @@
+{
+  "version": "0.0.1",
+  "conflicting": {
+
+  },
+  "recipes": {
+    "blog_engine::default": "Loads the database and installs the Blog Engine application as the default IIS site",
+    "blog_engine": ""
+  },
+  "providing": {
+    "blog_engine": [
+
+    ]
+  },
+  "long_description": "= DESCRIPTION:\n\nLoads the Blog Engine data into the local SQL Serveer database and installs the Blog Enging application as the\ndefault web application for IIS.\n\n= REQUIREMENTS:\n\n* db_sqlserver cookbook and web_iis cookbook.\n\n= USAGE:\n\nDesigned to be run within a RightScale ServerTemplate.",
+  "description": "Install and configure the Blog Engine application",
+  "name": "blog_engine",
+  "attributes": {
+    "db_sqlserver\/server_name": {
+      "default": "localhost\\SQLEXPRESS",
+      "type": "string",
+      "multiple_values": false,
+      "description": "The network name of the SQL Server instance used by recipes.",
+      "display_name": "SQL Server instance network name",
+      "required": false,
+      "recipes": [
+
+      ]
+    },
+    "web_iis\/deploy\/web_app_src_zips": {
+      "default": "d:\\datastore\\aspdotnet\\webapps",
+      "type": "string",
+      "multiple_values": false,
+      "description": "The path to the directory containing one or more web application source .zip file(s).",
+      "display_name": "Web App Source Zips Directory",
+      "required": false,
+      "recipes": [
+        "web_iis::do_simple_app_deploy"
+      ]
+    },
+    "db_sqlserver\/backup\/backup_file_name_pattern": {
+      "default": "{0}_{1}.bak",
+      "type": "string",
+      "multiple_values": false,
+      "description": "Format string with Powershell-style string format arguments for creating backup files. The 0 argument represents the database name and the 1 argument represents a generated time stamp.",
+      "display_name": "Backup file name format",
+      "required": false,
+      "recipes": [
+
+      ]
+    },
+    "db_sqlserver\/database_name": {
+      "default": "BlogEngine",
+      "type": "string",
+      "multiple_values": false,
+      "description": "The name of a database running on this SQL Server instance",
+      "display_name": "Database Name",
+      "required": false,
+      "recipes": [
+        "db_sqlserver::do_drop_database"
+      ]
+    },
+    "db_sqlserver\/backup\/database_backup_dir": {
+      "default": "c:\\datastore\\sqlserver\\databases",
+      "type": "string",
+      "multiple_values": false,
+      "description": "The local drive path or UNC path to the directory which will contain new SQL Server database backup (.bak) files. Note that network drives are not supported by SQL Server.",
+      "display_name": "SQL Server backup .bak directory",
+      "required": false,
+      "recipes": [
+        "db_sqlserver::do_backup",
+        "db_sqlserver::do_backup_demo"
+      ]
+    },
+    "win_admin\/admin_password": {
+      "type": "string",
+      "multiple_values": false,
+      "description": "New administrator password",
+      "display_name": "New administrator password",
+      "required": false,
+      "recipes": [
+
+      ]
+    }
+  },
+  "replacing": {
+
+  },
+  "dependencies": {
+    "web_iis": [
+
+    ],
+    "win_admin": [
+
+    ],
+    "sys_monitoring": [
+
+    ],
+    "db_sqlserver": [
+
+    ]
+  },
+  "maintainer": "RightScale, Inc.",
+  "recommendations": {
+
+  },
+  "platforms": {
+
+  },
+  "maintainer_email": "support@rightscale.com",
+  "suggestions": {
+
+  },
+  "license": "Copyright (c) 2009 RightScale, Inc.\n\nAll rights reserved - Do Not Redistribute\n"
+}
