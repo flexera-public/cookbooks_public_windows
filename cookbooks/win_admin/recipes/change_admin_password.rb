@@ -20,7 +20,3 @@ POWERSHELL_SCRIPT
 
   source(powershell_script)
 end
-
-template File.join('c:\uuid.rb') do
-  source 'uuid.rb.erb'
-end
