@@ -6,7 +6,7 @@ $nodePath = $cookbookName,$resourceName,$dbName
 $serverName = Get-NewResource server_name
 $backupDirPath = Get-NewResource backup_dir_path
 $forceRestore = Get-NewResource force_restore
-$backupFileNamePattern = (Get-NewResource backup_file_name_pattern) -f $dbName
+$backupFileNamePattern = (Get-NewResource existing_backup_file_name_pattern) -f $dbName
 
 # check if database exists before restoring.
 if (!$forceRestore -and (Get-ChefNode ($nodePath + "exists")))

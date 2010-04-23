@@ -4,8 +4,8 @@
 
   },
   "recipes": {
-    "win_admin": "",
     "win_admin::change_admin_password": "Changes the administrator password",
+    "win_admin": "",
     "win_admin::default": "Not yet implemented"
   },
   "providing": {
@@ -16,7 +16,7 @@
 
     ]
   },
-  "long_description": "= DESCRIPTION:\n\nWindows admin recipes.\n\n= REQUIREMENTS:\n\n\n= ATTRIBUTES: \n\nSee metadata.rb\n\n= USAGE:\n\nDesigned to be run within a RightScale ServerTemplate",
+  "long_description": "= DESCRIPTION:\n\nWindows admin recipes.\n\n= ATTRIBUTES: \n\nSee metadata.rb\n\n= USAGE:\n\nDesigned to be run within a RightScale ServerTemplate\n\nBoot Scripts\n  * change_admin_password - Changes the administrator password\n",
   "description": "Windows Admin",
   "name": "win_admin",
   "attributes": {

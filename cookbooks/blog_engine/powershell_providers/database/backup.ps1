@@ -5,7 +5,7 @@ $dbName = Get-NewResource name
 $nodePath = $cookbookName,$resourceName,$dbName
 $serverName = Get-NewResource server_name
 $backupDirPath = Get-NewResource backup_dir_path
-$backupFileNamePattern = (Get-NewResource backup_file_name_pattern) -f $dbName
+$existingBackupFileNamePattern = (Get-NewResource existing_backup_file_name_pattern) -f $dbName
 $backupFileNameFormat = Get-NewResource backup_file_name_format
 
 # check if database exists before backing up.

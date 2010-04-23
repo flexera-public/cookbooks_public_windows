@@ -1,4 +1,3 @@
-#
 # Copyright (c) 2010 RightScale Inc
 #
 # Permission is hereby granted, free of charge, to any person obtaining
@@ -20,10 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-actions :backup, :drop, :restore
-
-attribute :backup_dir_path, :kind_of => [ String ]
-attribute :backup_file_name_format, :kind_of => [ String ]
-attribute :backup_file_name_pattern, :kind_of => [ String ]
-attribute :server_name, :kind_of => [ String ]
-attribute :force_restore, :equal_to => [ true, false ]
+# Drop the demo database.
+db_sqlserver_powershell_database "BlogEngine" do
+  server_name @node[:db_sqlserver][:server_name]
+  action :drop
+end

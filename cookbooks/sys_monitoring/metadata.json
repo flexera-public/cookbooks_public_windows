@@ -4,15 +4,15 @@
 
   },
   "recipes": {
-    "sys_monitoring::default": "Install monitoring plugin",
-    "sys_monitoring": ""
+    "sys_monitoring": "",
+    "sys_monitoring::default": "Install monitoring plugin"
   },
   "providing": {
     "sys_monitoring": [
 
     ]
   },
-  "long_description": "= DESCRIPTION:\n\nEnable monitoring\n\n= USAGE:\n\nAdd to ServerTemplate to enable monitoring on instances using it.",
+  "long_description": "= DESCRIPTION:\n\nEnable monitoring\n\n= USAGE:\n\nAdd to ServerTemplate to enable monitoring on instances using it.\n\nBoot Scripts\n  * default - Install monitoring plugin\n",
   "description": "Send collectd data to RightScale",
   "name": "sys_monitoring",
   "attributes": {

@@ -1,21 +1,59 @@
 {
-  "version": "0.0.1",
+  "version": "0.2.0",
   "conflicting": {
 
   },
   "recipes": {
-    "blog_engine::default": "Loads the database and installs the Blog Engine application as the default IIS site",
-    "blog_engine": ""
+    "blog_engine::restore_database": "Restores the BlogEngine database from a local machine directory.",
+    "blog_engine::drop_database": "Drops the BlogEngine database.",
+    "blog_engine::default": "Loads the database and installs the BlogEngine application as the default IIS site",
+    "blog_engine": "",
+    "blog_engine::backup_database": "Backs up the BlogEngine database to a local machine directory."
   },
   "providing": {
+    "blog_engine::restore_database": [
+
+    ],
+    "blog_engine::drop_database": [
+
+    ],
     "blog_engine": [
+
+    ],
+    "blog_engine::backup_database": [
 
     ]
   },
-  "long_description": "= DESCRIPTION:\n\nLoads the Blog Engine data into the local SQL Serveer database and installs the Blog Enging application as the\ndefault web application for IIS.\n\n= REQUIREMENTS:\n\n* db_sqlserver cookbook and web_iis cookbook.\n\n= USAGE:\n\nDesigned to be run within a RightScale ServerTemplate.",
-  "description": "Install and configure the Blog Engine application",
+  "long_description": "= DESCRIPTION:\n\nLoads the BlogEngine data into the local SQL Server database and installs the BlogEngine application as the\ndefault web application for IIS.\n\n= REQUIREMENTS:\n\n* win_admin, and sys_monitoring cookbooks\n\n= USAGE:\n\nDesigned to be run within a RightScale ServerTemplate.\n\nBoot Scripts\n  * default - Loads the database and installs the BlogEngine application as the default IIS site\n\nOperational Scripts\n  * backup_database - Backs up the BlogEngine database to a local machine directory.\n  * restore_database - Restores the BlogEngine database from a local machine directory.\n  * drop_database - Drops the BlogEngine database.\n",
+  "description": "Install and configure the BlogEngine application, see http:\/\/www.dotnetblogengine.net",
   "name": "blog_engine",
   "attributes": {
+    "db_sqlserver\/backup\/existing_backup_file_name_pattern": {
+      "default": "{0}_*.bak",
+      "type": "string",
+      "multiple_values": false,
+      "description": "Wildcard file matching pattern (i.e. not a Regex) with Powershell-style string format arguments for finding backup files. The 0 argument represents the database name and the rest of the pattern should match the file names generated from the backup_file_name_format.",
+      "display_name": "Pattern matching backup file names",
+      "required": false,
+      "recipes": [
+        "blog_engine::default",
+        "blog_engine::backup_database",
+        "blog_engine::restore_database"
+      ]
+    },
+    "db_sqlserver\/backup\/backup_file_name_format": {
+      "default": "{0}_{1}.bak",
+      "type": "string",
+      "multiple_values": false,
+      "description": "Format string with Powershell-style string format arguments for creating backup files. The 0 argument represents the database name and the 1 argument represents a generated time stamp.",
+      "display_name": "Backup file name format",
+      "required": false,
+      "recipes": [
+        "blog_engine::default",
+        "blog_engine::backup_database",
+        "blog_engine::restore_database"
+      ]
+    },
     "db_sqlserver\/server_name": {
       "default": "localhost\\SQLEXPRESS",
       "type": "string",
@@ -24,7 +62,9 @@
       "display_name": "SQL Server instance network name",
       "required": false,
       "recipes": [
-
+        "blog_engine::default",
+        "blog_engine::backup_database",
+        "blog_engine::restore_database"
       ]
     },
     "web_iis\/deploy\/web_app_src_zips": {
@@ -35,29 +75,7 @@
       "display_name": "Web App Source Zips Directory",
       "required": false,
       "recipes": [
-        "web_iis::do_simple_app_deploy"
-      ]
-    },
-    "db_sqlserver\/backup\/backup_file_name_pattern": {
-      "default": "{0}_{1}.bak",
-      "type": "string",
-      "multiple_values": false,
-      "description": "Format string with Powershell-style string format arguments for creating backup files. The 0 argument represents the database name and the 1 argument represents a generated time stamp.",
-      "display_name": "Backup file name format",
-      "required": false,
-      "recipes": [
-
-      ]
-    },
-    "db_sqlserver\/database_name": {
-      "default": "BlogEngine",
-      "type": "string",
-      "multiple_values": false,
-      "description": "The name of a database running on this SQL Server instance",
-      "display_name": "Database Name",
-      "required": false,
-      "recipes": [
-        "db_sqlserver::do_drop_database"
+        "blog_engine::default"
       ]
     },
     "db_sqlserver\/backup\/database_backup_dir": {
@@ -68,8 +86,8 @@
       "display_name": "SQL Server backup .bak directory",
       "required": false,
       "recipes": [
-        "db_sqlserver::do_backup",
-        "db_sqlserver::do_backup_demo"
+        "blog_engine::backup_database",
+        "blog_engine::restore_database"
       ]
     },
     "win_admin\/admin_password": {
@@ -79,7 +97,7 @@
       "display_name": "New administrator password",
       "required": false,
       "recipes": [
-
+        "blog_engine::default"
       ]
     }
   },
@@ -87,16 +105,10 @@
 
   },
   "dependencies": {
-    "web_iis": [
-
-    ],
     "win_admin": [
 
     ],
     "sys_monitoring": [
-
-    ],
-    "db_sqlserver": [
 
     ]
   },

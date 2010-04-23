@@ -1,15 +1,20 @@
 = DESCRIPTION:
 
-Loads the Blog Engine data into the local SQL Serveer database and installs the Blog Enging application as the
+Loads the BlogEngine data into the local SQL Server database and installs the BlogEngine application as the
 default web application for IIS.
 
 = REQUIREMENTS:
 
-* db_sqlserver, web_iis, win_admin, and sys_monitoring cookbooks
+* win_admin, and sys_monitoring cookbooks
 
 = USAGE:
 
 Designed to be run within a RightScale ServerTemplate.
 
 Boot Scripts
-  * default - Loads the database and installs the Blog Engine application as the default IIS site
+  * default - Loads the database and installs the BlogEngine application as the default IIS site
+
+Operational Scripts
+  * backup_database - Backs up the BlogEngine database to a local machine directory.
+  * restore_database - Restores the BlogEngine database from a local machine directory.
+  * drop_database - Drops the BlogEngine database.
