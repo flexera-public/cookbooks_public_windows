@@ -64,7 +64,8 @@
       "recipes": [
         "blog_engine::default",
         "blog_engine::backup_database",
-        "blog_engine::restore_database"
+        "blog_engine::restore_database",
+        "blog_engine::drop_database"
       ]
     },
     "web_iis\/deploy\/web_app_src_zips": {

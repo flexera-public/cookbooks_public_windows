@@ -22,7 +22,7 @@ attribute "db_sqlserver/server_name",
   :display_name => "SQL Server instance network name",
   :description => "The network name of the SQL Server instance used by recipes.",
   :default => "localhost\\SQLEXPRESS",
-  :recipes => ["blog_engine::default", "blog_engine::backup_database", "blog_engine::restore_database"]
+  :recipes => ["blog_engine::default", "blog_engine::backup_database", "blog_engine::restore_database", "blog_engine::drop_database"]
 
 attribute "db_sqlserver/backup/database_backup_dir",
   :display_name => "SQL Server backup .bak directory",
