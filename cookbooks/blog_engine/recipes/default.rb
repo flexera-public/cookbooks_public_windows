@@ -24,7 +24,7 @@ unless @node[:boot_run]
   include_recipe 'sys_monitoring::default'
 
   # loads the demo database from cookbook-relative backup file.
-  db_sqlserver_powershell_database "BlogEngine" do
+  blogengine_powershell_database "BlogEngine" do
     machine_type = @node[:kernel][:machine]
 
     backup_dir_path File.expand_path(File.join(File.dirname(__FILE__), '..', 'files', 'default', machine_type))
