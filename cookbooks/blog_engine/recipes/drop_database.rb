@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 # Drop the demo database.
-blogengine_powershell_database "BlogEngine" do
+blog_engine_powershell_database "BlogEngine" do
   server_name @node[:db_sqlserver][:server_name]
   action :drop
 end
