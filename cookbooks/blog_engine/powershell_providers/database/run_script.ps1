@@ -20,43 +20,33 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 # locals.
-$cookbookName = Get-NewResource cookbook_name
-$resourceName = Get-NewResource resource_name
 $dbName = Get-NewResource name
-$nodePath = $cookbookName,$resourceName,$dbName
+$scriptPath = Get-NewResource script_path
 $serverName = Get-NewResource server_name
 
-# check if database exists before restoring.
-if (!(Get-ChefNode ($nodePath + "exists")))
+#check inputs.
+$Error.Clear()
+if (($dbName -eq $Null) -or ($dbName -eq ""))
 {
-    Write-Warning "Not dropping ""$dbName"" because it does not exist."
-    exit 0
+    Write-Error "Invalid or missing database name".
+    exit 100
 }
-
-# connect to server.
-$server = New-Object ("Microsoft.SqlServer.Management.Smo.Server") $serverName
-
-# intentionally fail if asked to drop a system database.
-$db = $server.Databases | where { !$_.IsSystemObject_ -and ($_.Name -eq $dbName) }
-if ($db)
+if (($scriptPath -eq $Null) -or ($scriptPath -eq ""))
 {
-    $Error.Clear()
-    $db.Drop()
-    if ($Error.Count -eq 0)
-    {
-        Write-Output "Dropped database named ""$dbName"""
-        Set-ChefNode ($nodePath + "exists") $False
-        Set-NewResource updated $True
-        exit 0
-    }
-    else
-    {
-        Write-Error 'Failed to drop ""$dbName.ToString()"" because ""$Error.ToString()""'
-        exit 100
-    }
-}
-else
-{
-    Write-Error "Failed to find a non-system database named ""$dbName"""
+    Write-Error "No SQL commands provided in resource".
     exit 101
 }
+if (($serverName -eq $Null) -or ($serverName -eq ""))
+{
+    Write-Error "Invalid or missing server name".
+    exit 102
+}
+if (0 -ne $Error.Count)
+{
+    exit 103
+}
+
+# note use of sqlcmd assumes SQL Server/Express installation puts tools on path.
+sqlcmd -S $serverName -d $dbName -i "$scriptPath" | Out-Null
+
+exit $LastExitCode

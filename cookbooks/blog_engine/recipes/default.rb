@@ -20,31 +20,44 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 unless @node[:boot_run]
+
   include_recipe 'win_admin::change_admin_password'
   include_recipe 'sys_monitoring::default'
 
-  # loads the demo database from cookbook-relative backup file.
-  blog_engine_powershell_database "BlogEngine" do
-    machine_type = @node[:kernel][:machine]
-
-    backup_dir_path File.expand_path(File.join(File.dirname(__FILE__), '..', 'files', 'default', machine_type))
-    existing_backup_file_name_pattern @node[:db_sqlserver][:backup][:existing_backup_file_name_pattern]
-    server_name @node[:db_sqlserver][:server_name]
-    force_restore false
-
-    action :restore
-  end
-
   # deploy web app zips to the wwwroot directory.
   powershell "Deploy demo web app from cookbook-relative zipped source to wwwroot under IIS" do
-    web_app_src_zips = File.expand_path(File.join(File.dirname(__FILE__), '..', 'files', 'default', 'i386'))
+    seven_zip_exe_path = File.expand_path(File.join(File.dirname(__FILE__), '..', 'files', 'default', 'bin', '7z.exe'))
+    web_app_src_zips = File.expand_path(File.join(File.dirname(__FILE__), '..', 'files', 'default', 'app'))
     parameters('WEB_APP_ZIP_DIR_PATH' => web_app_src_zips,
-               'CHECK_FOR_EXISTANCE' => 'true')
+               'CHECK_FOR_EXISTENCE' => 'true',
+               'SEVEN_ZIP_EXE_PATH' => seven_zip_exe_path)
 
     source_file_path = File.expand_path(File.join(File.dirname(__FILE__), '..', 'files', 'default', 'simple_app_deploy.ps1'))
     source_path(source_file_path)
   end
 
+  # load the demo database from deployed SQL script.
+  blog_engine_powershell_database "master" do
+    server_name @node[:db_sqlserver][:server_name]
+    commands ["CREATE DATABASE [BlogEngine]"]
+    action :run_command
+  end
+
+  # load the initial demo database from deployed SQL script.
+  blog_engine_powershell_database "BlogEngine" do
+    server_name @node[:db_sqlserver][:server_name]
+    script_path "c:\\inetpub\\wwwroot\\setup\\SQLServer\\MSSQLSetup1.5.0.0.sql"
+    action :run_script
+  end
+
+  # load the initial demo database from deployed SQL script.
+  blog_engine_powershell_database "BlogEngine" do
+    server_name @node[:db_sqlserver][:server_name]
+    commands ["CREATE USER [NetworkService] FOR LOGIN [NT AUTHORITY\\NETWORK SERVICE]",
+              "EXEC sp_addrolemember 'db_datareader', 'NetworkService'",
+              "EXEC sp_addrolemember 'db_datawriter', 'NetworkService'"]
+    action :run_command
+  end
+
   @node[:boot_run] = true
 end
-

@@ -3,7 +3,7 @@ maintainer_email "support@rightscale.com"
 license          IO.read(File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'LICENSE')))
 description      "Install and configure the BlogEngine application, see http://www.dotnetblogengine.net"
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.rdoc'))
-version          "0.2.0"
+version          "0.3.0"
 
 depends 'win_admin'
 depends 'sys_monitoring'
@@ -41,10 +41,3 @@ attribute "db_sqlserver/backup/existing_backup_file_name_pattern",
   :description => "Wildcard file matching pattern (i.e. not a Regex) with Powershell-style string format arguments for finding backup files. The 0 argument represents the database name and the rest of the pattern should match the file names generated from the backup_file_name_format.",
   :default => "{0}_*.bak",
   :recipes => ["blog_engine::default", "blog_engine::backup_database", "blog_engine::restore_database"]
-
-attribute "web_iis/deploy/web_app_src_zips",
-  :display_name => "Web App Source Zips Directory",
-  :description => "The path to the directory containing one or more web application source .zip file(s).",
-  :default => "d:\\datastore\\aspdotnet\\webapps",
-  :recipes => ["blog_engine::default"]
-

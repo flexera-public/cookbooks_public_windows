@@ -20,43 +20,61 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 # locals.
-$cookbookName = Get-NewResource cookbook_name
-$resourceName = Get-NewResource resource_name
 $dbName = Get-NewResource name
-$nodePath = $cookbookName,$resourceName,$dbName
+$commands = Get-NewResource commands
 $serverName = Get-NewResource server_name
 
-# check if database exists before restoring.
-if (!(Get-ChefNode ($nodePath + "exists")))
+#check inputs.
+$Error.Clear()
+if (($dbName -eq $Null) -or ($dbName -eq ""))
 {
-    Write-Warning "Not dropping ""$dbName"" because it does not exist."
-    exit 0
+    Write-Error "Invalid or missing database name".
+    exit 100
 }
-
-# connect to server.
-$server = New-Object ("Microsoft.SqlServer.Management.Smo.Server") $serverName
-
-# intentionally fail if asked to drop a system database.
-$db = $server.Databases | where { !$_.IsSystemObject_ -and ($_.Name -eq $dbName) }
-if ($db)
+if (($commands -eq $Null) -or ($commands.Count -eq 0))
 {
-    $Error.Clear()
-    $db.Drop()
-    if ($Error.Count -eq 0)
-    {
-        Write-Output "Dropped database named ""$dbName"""
-        Set-ChefNode ($nodePath + "exists") $False
-        Set-NewResource updated $True
-        exit 0
-    }
-    else
-    {
-        Write-Error 'Failed to drop ""$dbName.ToString()"" because ""$Error.ToString()""'
-        exit 100
-    }
-}
-else
-{
-    Write-Error "Failed to find a non-system database named ""$dbName"""
+    Write-Error "No SQL commands provided in resource".
     exit 101
+}
+if (($serverName -eq $Null) -or ($serverName -eq ""))
+{
+    Write-Error "Invalid or missing server name".
+    exit 102
+}
+if (0 -ne $Error.Count)
+{
+    exit 103
+}
+
+# client connection.
+$sqlClient = new-object System.Data.SqlClient.SqlConnection "server=$serverName;database=$dbName;trusted_connection=true;"
+$sqlClient.Open()
+if (0 -ne $Error.Count)
+{
+    exit 104
+}
+
+$sqlCommand = New-Object System.Data.SQLClient.SQLCommand
+$sqlCommand.Connection = $sqlClient
+$result = $True
+foreach ($command in $commands)
+{
+    Write-Verbose "Executing ""$command"""
+    $sqlCommand.CommandText = $command
+    $rowCount = $sqlCommand.ExecuteNonQuery()
+    if ($rowCount -ge 0)
+    {
+        Write-Verbose "Rows affected = $rowCount"
+    }
+    if (0 -ne $Error.Count)
+    {
+        $result = $False
+        break
+    }
+}
+$sqlClient.Close()
+
+if (!$result)
+{
+    exit 105
 }

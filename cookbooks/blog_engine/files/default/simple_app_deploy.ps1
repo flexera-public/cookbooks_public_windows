@@ -20,23 +20,20 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 # Deploys all web app from zipped source to wwwroot under IIS.
+$checkForExistence = "$env:CHECK_FOR_EXISTENCE" -ne "false"
+$sevenZipExePath = $env:SEVEN_ZIP_EXE_PATH
+$webAppZipDirPath = $env:WEB_APP_ZIP_DIR_PATH
 
 # check inputs.
-$webAppZipDirPath = $env:WEB_APP_ZIP_DIR_PATH
 if ("$webAppZipDirPath" -eq "")
 {
     Write-Error "The WEB_APP_ZIP_DIR_PATH environment variable was not set"
     exit 100
 }
-
-$checkForExistance = $env:CHECK_FOR_EXISTANCE
-if (("$checkForExistance" -eq "") -or ("$checkForExistance" -eq "false"))
+if (("$sevenZipExePath" -eq "") -or !(test-path $sevenZipExePath))
 {
-    $checkForExistance = $false
-}
-else
-{
-    $checkForExistance = $true
+    Write-Error "The SEVEN_ZIP_EXE_PATH environment variable was not set or is invalid."
+    exit 101
 }
 
 # wwwroot is always found at the same location (at least for simple deployment).
@@ -51,24 +48,10 @@ $zipFilesToExtract = $webAppZipDir.GetFiles("*.zip")
 
 # check existence, if requested.
 $doInstall = $true
-if ($checkForExistance -eq $true)
+$webConfigFileName = "web.config"
+if ($checkForExistence -and (test-path (join-path $wwwRootDirPath $webConfigFileName)))
 {
-    # check each .zip for web.config and compare date against installed date.
-    $webConfigFileName = "web.config"
-    Write-Verbose "Checking for existence of ""$webAppZipFilePath"" in ""$wwwRootDirPath"""
-
-    foreach ($webAppZipFile in $zipFilesToExtract)
-    {
-        $webAppZipFilePath = $webAppZipFile.FullName
-        $zipPackage        = $shellApplication.NameSpace($webAppZipFilePath)
-        $items             = $zipPackage.Items()
-        $webConfigSrcFile  = $items | where-object {$_.Name -eq $webConfigFileName}
-        if ("$webConfigSrcFile" -ne "")
-        {
-            $webConfigDstFile = Join-path $wwwRootDirPath $webConfigFileName | Get-Item -ea SilentlyContinue
-            $doInstall = (("$webConfigDstFile" -eq "") -or (("$webConfigDstFile" -ne "") -and ($webConfigSrcFile.ModifyDate -gt $webConfigDstFile.LastWriteTime)))
-        }
-    }
+    $doInstall = $false
 }
 
 if ($doInstall -eq $true)
@@ -84,7 +67,7 @@ if ($doInstall -eq $true)
     if ($Error.Count -ne 0)
     {
         Write-Error "Failed to clean the ""$wwwRootDirPath"" directory. Some files may still be in use."
-        exit 104
+        exit 102
     }
 
     # iterate webapp files unzipping each to the wwwroot location. if there are
@@ -96,22 +79,23 @@ if ($doInstall -eq $true)
         $webAppZipFilePath = $webAppZipFile.FullName
         Write-Verbose "Unzipping ""$webAppZipFilePath"" to ""$wwwRootDirPath"""
 
-        $zipPackage       = $shellApplication.NameSpace($webAppZipFilePath)
-        $targetDir        = $shellApplication.NameSpace($wwwRootDirPath)
+        # use bundled 7-zip for simplicity; if multiple recipes depend on 7-zip
+        # then it should be installed by recipe.
+        Write-Verbose """$sevenZipExePath"" x ""$webAppZipFilePath"" ""-o$wwwRootDirPath"" -r"
+        & "$sevenZipExePath" x "$webAppZipFilePath" "-o$wwwRootDirPath" -r | Out-Null
+        if ($LastExitCode -ne 0)
+        {
+            Write-Error "Unzip failed."
+            exit 103
+        }
 
-        # see http://msdn.microsoft.com/en-us/library/bb787866%28VS.85%29.aspx or the "Folder"
-        # shell object "CopyHere" method reference for the following copy options.
-        #
-        # note that the Windows 2003 Server shell appears to ignore any provided options and
-        # the progress dialog appears anyway. so long as there are no copy errors, this is ok.
-        # if copying fails (or same named files exist), the call will hang waiting for user response.
-        # we could use another free-ware command-line unzip utility for windows (7-zip, etc.), but
-        # this is the only unzip utility that doesn't need to be installed (under WinXP+).
-        $copyOptions = 4 +    # Do not display a progress dialog box.
-                       16 +   # Respond with "Yes to All" for any dialog box that is displayed.
-                       1024;  # Do not display a user interface if an error occurs.
-
-        $targetDir.CopyHere($zipPackage.Items(), $copyOptions)
+        # verify config file exists.
+        $webConfigDstFile = Join-path $wwwRootDirPath $webConfigFileName | Get-Item -ea SilentlyContinue
+        if ("$webConfigDstFile" -eq "")
+        {
+            Write-Error "Failed to deploy ""$webConfigFileName"" to ""$wwwRootDirPath"""
+            exit 104
+        }
 
         # note that we currently do not modify the connection strings for web apps and
         # just assume they are pre-configured for the instance's server name, etc.

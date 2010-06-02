@@ -1,128 +1,116 @@
 {
-  "version": "0.2.0",
-  "conflicting": {
+    "replacing": {
+    },
+    "platforms": {
+    },
+    "groupings": {
+    },
+    "attributes": {
+      "db_sqlserver/backup/existing_backup_file_name_pattern": {
+        "required": "optional",
+        "calculated": false,
+        "default": "{0}_*.bak",
+        "choice": [
 
-  },
-  "recipes": {
-    "blog_engine::restore_database": "Restores the BlogEngine database from a local machine directory.",
-    "blog_engine::drop_database": "Drops the BlogEngine database.",
-    "blog_engine::default": "Loads the database and installs the BlogEngine application as the default IIS site",
-    "blog_engine": "",
-    "blog_engine::backup_database": "Backs up the BlogEngine database to a local machine directory."
-  },
-  "providing": {
-    "blog_engine::restore_database": [
+        ],
+        "type": "string",
+        "recipes": [
+          "blog_engine::default",
+          "blog_engine::backup_database",
+          "blog_engine::restore_database"
+        ],
+        "display_name": "Pattern matching backup file names",
+        "description": "Wildcard file matching pattern (i.e. not a Regex) with Powershell-style string format arguments for finding backup files. The 0 argument represents the database name and the rest of the pattern should match the file names generated from the backup_file_name_format."
+      },
+      "db_sqlserver/backup/backup_file_name_format": {
+        "required": "optional",
+        "calculated": false,
+        "default": "{0}_{1}.bak",
+        "choice": [
 
-    ],
-    "blog_engine::drop_database": [
+        ],
+        "type": "string",
+        "recipes": [
+          "blog_engine::default",
+          "blog_engine::backup_database",
+          "blog_engine::restore_database"
+        ],
+        "display_name": "Backup file name format",
+        "description": "Format string with Powershell-style string format arguments for creating backup files. The 0 argument represents the database name and the 1 argument represents a generated time stamp."
+      },
+      "db_sqlserver/server_name": {
+        "required": "optional",
+        "calculated": false,
+        "default": "localhost\\SQLEXPRESS",
+        "choice": [
 
-    ],
-    "blog_engine": [
+        ],
+        "type": "string",
+        "recipes": [
+          "blog_engine::default",
+          "blog_engine::backup_database",
+          "blog_engine::restore_database",
+          "blog_engine::drop_database"
+        ],
+        "display_name": "SQL Server instance network name",
+        "description": "The network name of the SQL Server instance used by recipes."
+      },
+      "win_admin/admin_password": {
+        "required": "optional",
+        "calculated": false,
+        "choice": [
 
-    ],
-    "blog_engine::backup_database": [
+        ],
+        "type": "string",
+        "recipes": [
+          "blog_engine::default"
+        ],
+        "display_name": "New administrator password",
+        "description": "New administrator password"
+      },
+      "db_sqlserver/backup/database_backup_dir": {
+        "required": "optional",
+        "calculated": false,
+        "default": "c:\\datastore\\sqlserver\\databases",
+        "choice": [
 
-    ]
-  },
-  "long_description": "= DESCRIPTION:\n\nLoads the BlogEngine data into the local SQL Server database and installs the BlogEngine application as the\ndefault web application for IIS.\n\n= REQUIREMENTS:\n\n* win_admin, and sys_monitoring cookbooks\n\n= USAGE:\n\nDesigned to be run within a RightScale ServerTemplate.\n\nBoot Scripts\n  * default - Loads the database and installs the BlogEngine application as the default IIS site\n\nOperational Scripts\n  * backup_database - Backs up the BlogEngine database to a local machine directory.\n  * restore_database - Restores the BlogEngine database from a local machine directory.\n  * drop_database - Drops the BlogEngine database.\n",
-  "description": "Install and configure the BlogEngine application, see http:\/\/www.dotnetblogengine.net",
-  "name": "blog_engine",
-  "attributes": {
-    "db_sqlserver\/backup\/existing_backup_file_name_pattern": {
-      "default": "{0}_*.bak",
-      "type": "string",
-      "multiple_values": false,
-      "description": "Wildcard file matching pattern (i.e. not a Regex) with Powershell-style string format arguments for finding backup files. The 0 argument represents the database name and the rest of the pattern should match the file names generated from the backup_file_name_format.",
-      "display_name": "Pattern matching backup file names",
-      "required": false,
-      "recipes": [
-        "blog_engine::default",
-        "blog_engine::backup_database",
-        "blog_engine::restore_database"
+        ],
+        "type": "string",
+        "recipes": [
+          "blog_engine::backup_database",
+          "blog_engine::restore_database"
+        ],
+        "display_name": "SQL Server backup .bak directory",
+        "description": "The local drive path or UNC path to the directory which will contain new SQL Server database backup (.bak) files. Note that network drives are not supported by SQL Server."
+      }
+    },
+    "long_description": "= DESCRIPTION:\n\nLoads the BlogEngine data into the local SQL Server database and installs the BlogEngine application as the\ndefault web application for IIS.\n\n= REQUIREMENTS:\n\n* win_admin, and sys_monitoring cookbooks\n\n= USAGE:\n\nDesigned to be run within a RightScale ServerTemplate.\n\nBoot Scripts\n  * default - Loads the database and installs the BlogEngine application as the default IIS site\n\nOperational Scripts\n  * backup_database - Backs up the BlogEngine database to a local machine directory.\n  * restore_database - Restores the BlogEngine database from a local machine directory.\n  * drop_database - Drops the BlogEngine database.\n",
+    "recommendations": {
+    },
+    "license": "Copyright (c) 2009 RightScale, Inc.\n\nAll rights reserved - Do Not Redistribute\n",
+    "recipes": {
+      "blog_engine::default": "Loads the database and installs the BlogEngine application as the default IIS site",
+      "blog_engine::restore_database": "Restores the BlogEngine database from a local machine directory.",
+      "blog_engine::drop_database": "Drops the BlogEngine database.",
+      "blog_engine::backup_database": "Backs up the BlogEngine database to a local machine directory."
+    },
+    "maintainer": "RightScale, Inc.",
+    "suggestions": {
+    },
+    "dependencies": {
+      "win_admin": [
+
+      ],
+      "sys_monitoring": [
+
       ]
     },
-    "db_sqlserver\/backup\/backup_file_name_format": {
-      "default": "{0}_{1}.bak",
-      "type": "string",
-      "multiple_values": false,
-      "description": "Format string with Powershell-style string format arguments for creating backup files. The 0 argument represents the database name and the 1 argument represents a generated time stamp.",
-      "display_name": "Backup file name format",
-      "required": false,
-      "recipes": [
-        "blog_engine::default",
-        "blog_engine::backup_database",
-        "blog_engine::restore_database"
-      ]
+    "version": "0.3.0",
+    "maintainer_email": "support@rightscale.com",
+    "conflicting": {
     },
-    "db_sqlserver\/server_name": {
-      "default": "localhost\\SQLEXPRESS",
-      "type": "string",
-      "multiple_values": false,
-      "description": "The network name of the SQL Server instance used by recipes.",
-      "display_name": "SQL Server instance network name",
-      "required": false,
-      "recipes": [
-        "blog_engine::default",
-        "blog_engine::backup_database",
-        "blog_engine::restore_database",
-        "blog_engine::drop_database"
-      ]
-    },
-    "web_iis\/deploy\/web_app_src_zips": {
-      "default": "d:\\datastore\\aspdotnet\\webapps",
-      "type": "string",
-      "multiple_values": false,
-      "description": "The path to the directory containing one or more web application source .zip file(s).",
-      "display_name": "Web App Source Zips Directory",
-      "required": false,
-      "recipes": [
-        "blog_engine::default"
-      ]
-    },
-    "db_sqlserver\/backup\/database_backup_dir": {
-      "default": "c:\\datastore\\sqlserver\\databases",
-      "type": "string",
-      "multiple_values": false,
-      "description": "The local drive path or UNC path to the directory which will contain new SQL Server database backup (.bak) files. Note that network drives are not supported by SQL Server.",
-      "display_name": "SQL Server backup .bak directory",
-      "required": false,
-      "recipes": [
-        "blog_engine::backup_database",
-        "blog_engine::restore_database"
-      ]
-    },
-    "win_admin\/admin_password": {
-      "type": "string",
-      "multiple_values": false,
-      "description": "New administrator password",
-      "display_name": "New administrator password",
-      "required": false,
-      "recipes": [
-        "blog_engine::default"
-      ]
+    "description": "Install and configure the BlogEngine application, see http://www.dotnetblogengine.net",
+    "name": "blog_engine",
+    "providing": {
     }
-  },
-  "replacing": {
-
-  },
-  "dependencies": {
-    "win_admin": [
-
-    ],
-    "sys_monitoring": [
-
-    ]
-  },
-  "maintainer": "RightScale, Inc.",
-  "recommendations": {
-
-  },
-  "platforms": {
-
-  },
-  "maintainer_email": "support@rightscale.com",
-  "suggestions": {
-
-  },
-  "license": "Copyright (c) 2009 RightScale, Inc.\n\nAll rights reserved - Do Not Redistribute\n"
-}
+  }

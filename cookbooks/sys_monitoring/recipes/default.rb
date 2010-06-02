@@ -19,12 +19,14 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+require 'fileutils'
+
 # Install collectd gem
 ruby 'setup monitoring' do
-  code <<-EOC 
-    require 'fileutils'
-    FileUtils.mkdir_p('#{File.join(RightScale::RightLinkConfig[:rs_root_path], '..', 'RightLinkService', 'scripts')}')
-  EOC
+  src_collectd_dir_path = File.join(File.dirname(__FILE__), '..', 'files', 'default', 'collectd')
+  dst_collectd_dir_path = File.expand_path(File.join(RightScale::RightLinkConfig[:rs_root_path], '..', 'RightLinkService', 'scripts', 'lib', 'collectd'))
+  FileUtils.mkdir_p(dst_collectd_dir_path)
+  FileUtils.cp_r(File.join(src_collectd_dir_path, '.'), dst_collectd_dir_path)
 end
 
 # Enable monitoring in the dashboard
