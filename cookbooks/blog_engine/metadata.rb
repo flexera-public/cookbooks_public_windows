@@ -3,7 +3,7 @@ maintainer_email "support@rightscale.com"
 license          IO.read(File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'LICENSE')))
 description      "Install and configure the BlogEngine application, see http://www.dotnetblogengine.net"
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.rdoc'))
-version          "0.3.0"
+version          "0.3.1"
 
 depends 'win_admin'
 depends 'sys_monitoring'

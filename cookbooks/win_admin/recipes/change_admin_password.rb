@@ -6,12 +6,8 @@
 # All rights reserved
 
 # change admin password
-powershell "Changes the administrator password" do
-  chef_attribute = Chef::Node::Attribute.new(
-                      {'ADMIN_PASSWORD' => @node[:win_admin][:admin_password]},
-                      {},
-                      {})
-  parameters(chef_attribute)
+powershell "Change the administrator password" do
+  parameters('ADMIN_PASSWORD' => @node[:win_admin][:admin_password])
 
   # Create the powershell script
   powershell_script = <<'POWERSHELL_SCRIPT'

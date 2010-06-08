@@ -87,7 +87,7 @@
     "long_description": "= DESCRIPTION:\n\nLoads the BlogEngine data into the local SQL Server database and installs the BlogEngine application as the\ndefault web application for IIS.\n\n= REQUIREMENTS:\n\n* win_admin, and sys_monitoring cookbooks\n\n= USAGE:\n\nDesigned to be run within a RightScale ServerTemplate.\n\nBoot Scripts\n  * default - Loads the database and installs the BlogEngine application as the default IIS site\n\nOperational Scripts\n  * backup_database - Backs up the BlogEngine database to a local machine directory.\n  * restore_database - Restores the BlogEngine database from a local machine directory.\n  * drop_database - Drops the BlogEngine database.\n",
     "recommendations": {
     },
-    "license": "Copyright (c) 2009 RightScale, Inc.\n\nAll rights reserved - Do Not Redistribute\n",
+    "license": "Copyright (c) 2010 RightScale, Inc.\n\nAll rights reserved - Do Not Redistribute\n",
     "recipes": {
       "blog_engine::default": "Loads the database and installs the BlogEngine application as the default IIS site",
       "blog_engine::restore_database": "Restores the BlogEngine database from a local machine directory.",
@@ -105,7 +105,7 @@
 
       ]
     },
-    "version": "0.3.0",
+    "version": "0.3.1",
     "maintainer_email": "support@rightscale.com",
     "conflicting": {
     },

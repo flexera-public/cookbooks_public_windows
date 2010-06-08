@@ -23,6 +23,7 @@ unless @node[:boot_run]
 
   include_recipe 'win_admin::change_admin_password'
   include_recipe 'sys_monitoring::default'
+  include_recipe 'win_admin::enable_sql_express_service'
 
   # deploy web app zips to the wwwroot directory.
   powershell "Deploy demo web app from cookbook-relative zipped source to wwwroot under IIS" do

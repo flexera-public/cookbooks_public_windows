@@ -1,52 +1,45 @@
 {
-  "version": "0.0.2",
-  "conflicting": {
+    "replacing": {
+    },
+    "platforms": {
+    },
+    "groupings": {
+    },
+    "attributes": {
+      "win_admin/admin_password": {
+        "required": "optional",
+        "calculated": false,
+        "choice": [
 
-  },
-  "recipes": {
-    "win_admin::change_admin_password": "Changes the administrator password",
-    "win_admin": "",
-    "win_admin::default": "Not yet implemented"
-  },
-  "providing": {
-    "win_admin": [
-
-    ],
-    "win_admin::change_admin_password": [
-
-    ]
-  },
-  "long_description": "= DESCRIPTION:\n\nWindows admin recipes.\n\n= ATTRIBUTES: \n\nSee metadata.rb\n\n= USAGE:\n\nDesigned to be run within a RightScale ServerTemplate\n\nBoot Scripts\n  * change_admin_password - Changes the administrator password\n",
-  "description": "Windows Admin",
-  "name": "win_admin",
-  "attributes": {
-    "win_admin\/admin_password": {
-      "type": "string",
-      "multiple_values": false,
-      "description": "New administrator password",
-      "display_name": "New administrator password",
-      "required": false,
-      "recipes": [
-        "win_admin::change_admin_password"
-      ]
+        ],
+        "type": "string",
+        "recipes": [
+          "win_admin::change_admin_password"
+        ],
+        "display_name": "New administrator password",
+        "description": "New administrator password"
+      }
+    },
+    "long_description": "= DESCRIPTION:\n\nWindows admin recipes.\n\n= ATTRIBUTES: \n\nSee metadata.rb\n\n= USAGE:\n\nDesigned to be run within a RightScale ServerTemplate\n\nBoot Scripts\n  * change_admin_password - Changes the administrator password\n  * enable_sql_express_service - Enables the SQL Express service if disabled\n",
+    "recommendations": {
+    },
+    "license": "Copyright (c) 2009 RightScale, Inc.\n\nAll rights reserved - Do Not Redistribute\n",
+    "recipes": {
+      "win_admin::change_admin_password": "Changes the administrator password",
+      "win_admin::enable_sql_express_service": "Enables the SQL Express service if disabled",
+      "win_admin::default": "Not yet implemented"
+    },
+    "maintainer": "RightScale, Inc.",
+    "suggestions": {
+    },
+    "dependencies": {
+    },
+    "version": "0.3.0",
+    "maintainer_email": "alex@rightscale.com",
+    "conflicting": {
+    },
+    "description": "Windows Admin",
+    "name": "win_admin",
+    "providing": {
     }
-  },
-  "replacing": {
-
-  },
-  "dependencies": {
-
-  },
-  "maintainer": "RightScale, Inc.",
-  "recommendations": {
-
-  },
-  "platforms": {
-
-  },
-  "maintainer_email": "alex@rightscale.com",
-  "suggestions": {
-
-  },
-  "license": "Copyright (c) 2009 RightScale, Inc.\n\nAll rights reserved - Do Not Redistribute\n"
-}
+  }
