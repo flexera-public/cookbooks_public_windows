@@ -2,7 +2,7 @@
 
 Windows admin recipes.
 
-= ATTRIBUTES: 
+= ATTRIBUTES:
 
 See metadata.rb
 
@@ -13,3 +13,4 @@ Designed to be run within a RightScale ServerTemplate
 Boot Scripts
   * change_admin_password - Changes the administrator password
   * enable_sql_express_service - Enables the SQL Express service if disabled
+  * start_default_website -Starts the website named "Default Web Site" if it is not already running
