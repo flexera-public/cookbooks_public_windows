@@ -1,5 +1,5 @@
 # Cookbook Name:: win_admin
-# Recipe:: change_admin_password
+# Recipe:: start_default_website
 #
 # Copyright 2010, RightScale, Inc.
 #
@@ -9,10 +9,10 @@
 powershell "Start Web Site" do
   # Create the powershell script
   powershell_script = <<EOF
-    $site = Get-WmiObject -Namespace "root\webadministration" -Class Site -Filter "Name = 'Default Web Site'";
+    $site = Get-WmiObject -Namespace "root\\webadministration" -Class Site -Filter "Name = 'Default Web Site'";
     if ($Null -eq $site)
     {
-        Write-Error "The website named (Default Web Site) does not exist on the machiane"
+        Write-Error "The website named (Default Web Site) does not exist on the machine"
         exit 100
     }
     else
