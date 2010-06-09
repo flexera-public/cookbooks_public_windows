@@ -60,7 +60,6 @@ unless @node[:boot_run]
     action :run_command
   end
 
-  # start the default website
   include_recipe 'win_admin::start_default_website'
 
   @node[:boot_run] = true

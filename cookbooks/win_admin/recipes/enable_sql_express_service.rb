@@ -1,11 +1,11 @@
 # Cookbook Name:: win_admin
-# Recipe:: change_admin_password
+# Recipe:: enable_sql_express_service
 #
 # Copyright 2010, RightScale, Inc.
 #
 # All rights reserved
 
-# change admin password
+# enable the SQL Express service
 powershell "Enable the SQL Express service" do
   # Create the powershell script
   powershell_script = <<EOF
