@@ -1,0 +1,18 @@
+= DESCRIPTION:
+
+Aws recipes and providers.
+
+= ATTRIBUTES:
+
+See metadata.rb
+
+= USAGE:
+
+Designed to be run within a RightScale ServerTemplate
+
+Boot Scripts
+* install_dotnet_sdk - Install Amazon Web Services SDK for .NET
+* register_with_elb - Register the instance with an Elastic Load Balancer created in the same ec2 region. Requires recipe: 'aws::install_dotnet_sdk'
+
+Decommission Scripts
+* deregister_from_elb - Deregister the instance with an Elastic Load Balancer created in the same ec2 region. Requires recipe: 'aws::install_dotnet_sdk'

@@ -20,9 +20,16 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-wmi_query_name_attribute  'Name'
-wmi_query_send_attributes 'CurrentConnections'
-wmi_query                 "Select #{wmi_query_name_attribute},#{wmi_query_send_attributes} from Win32_PerfRawData_W3SVC_WebService where Name!='_Total'"
-collectd_plugin           'iis'
-collectd_type             'iis_connections'
-collectd_type_instance    'current'
+actions :create, :delete
+
+#optional
+attribute :task_name, :kind_of => [ String ]
+attribute :daily_time, :kind_of => [ String ]
+
+#required
+attribute :command, :kind_of => [ String ]
+attribute :hourly_frequency, :kind_of => [ String ]
+attribute :username, :kind_of => [ String ]
+attribute :password, :kind_of => [ String ]
+
+

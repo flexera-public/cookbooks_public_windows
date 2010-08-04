@@ -1,0 +1,12 @@
+= DESCRIPTION:
+
+SQL Server Recipes and Providers
+
+= REQUIREMENTS:
+
+Use on a RightImage which includes SQL Server (2005 or 2008, Express or Standard).
+
+= USAGE:
+
+Designed to be run within a RightScale ServerTemplate.
+

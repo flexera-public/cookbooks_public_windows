@@ -1,0 +1,11 @@
+= DESCRIPTION:
+
+Windows utilities recipes.
+
+= ATTRIBUTES:
+
+See metadata.rb
+
+= USAGE:
+
+Designed to be run within a RightScale ServerTemplate

@@ -1,3 +1,5 @@
+# Cookbook Name:: utilities
+# Recipe:: create_scheduled_task
 #
 # Copyright (c) 2010 RightScale Inc
 #
@@ -20,9 +22,12 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-wmi_query_name_attribute  'Name'
-wmi_query_send_attributes 'CurrentConnections'
-wmi_query                 "Select #{wmi_query_name_attribute},#{wmi_query_send_attributes} from Win32_PerfRawData_W3SVC_WebService where Name!='_Total'"
-collectd_plugin           'iis'
-collectd_type             'iis_connections'
-collectd_type_instance    'current'
+# create a scheduled the task
+utilities_scheduled_tasks "rs_scheduled_task" do
+  username "administrator"
+  password @node[:utilities][:admin_password]
+  command @node[:schtasks][:command]
+  hourly_frequency @node[:schtasks][:hourly_frequency]
+  daily_time @node[:schtasks][:daily_time]
+  action :create
+end

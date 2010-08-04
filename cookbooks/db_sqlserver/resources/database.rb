@@ -20,9 +20,14 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-wmi_query_name_attribute  'Name'
-wmi_query_send_attributes 'CurrentConnections'
-wmi_query                 "Select #{wmi_query_name_attribute},#{wmi_query_send_attributes} from Win32_PerfRawData_W3SVC_WebService where Name!='_Total'"
-collectd_plugin           'iis'
-collectd_type             'iis_connections'
-collectd_type_instance    'current'
+actions :backup, :drop, :restore, :run_command, :run_script
+
+attribute :backup_dir_path, :kind_of => [ String ]
+attribute :backup_file_name_format, :kind_of => [ String ]
+attribute :existing_backup_file_name_pattern, :kind_of => [ String ]
+attribute :server_name, :kind_of => [ String ]
+attribute :force_restore, :equal_to => [ true, false ]
+attribute :commands, :kind_of => [ Array ]
+attribute :script_path, :kind_of => [ String ]
+attribute :zip_backup, :equal_to => [ true, false ]
+attribute :delete_sql_after_zip, :equal_to => [ true, false ]

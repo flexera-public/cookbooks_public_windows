@@ -1,3 +1,5 @@
+# Cookbook Name:: utilities
+# Recipe:: delete_scheduled_task
 #
 # Copyright (c) 2010 RightScale Inc
 #
@@ -20,9 +22,13 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-wmi_query_name_attribute  'Name'
-wmi_query_send_attributes 'CurrentConnections'
-wmi_query                 "Select #{wmi_query_name_attribute},#{wmi_query_send_attributes} from Win32_PerfRawData_W3SVC_WebService where Name!='_Total'"
-collectd_plugin           'iis'
-collectd_type             'iis_connections'
-collectd_type_instance    'current'
+# Delete the scheduled task
+utilities_scheduled_tasks "rs_scheduled_task" do
+  action :delete
+end
+
+
+
+
+
+

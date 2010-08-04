@@ -1,3 +1,5 @@
+# Cookbook Name:: db_sqlserver
+# Recipe:: backup_to_s3
 #
 # Copyright (c) 2010 RightScale Inc
 #
@@ -20,9 +22,16 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-wmi_query_name_attribute  'Name'
-wmi_query_send_attributes 'CurrentConnections'
-wmi_query                 "Select #{wmi_query_name_attribute},#{wmi_query_send_attributes} from Win32_PerfRawData_W3SVC_WebService where Name!='_Total'"
-collectd_plugin           'iis'
-collectd_type             'iis_connections'
-collectd_type_instance    'current'
+# Backup database 
+db_sqlserver_database @node[:db_sqlserver][:database_name] do
+  machine_type = @node[:kernel][:machine]
+
+  backup_dir_path @node[:db_sqlserver][:backup][:database_backup_dir]
+  backup_file_name_format @node[:db_sqlserver][:backup][:backup_file_name_format]
+  existing_backup_file_name_pattern @node[:db_sqlserver][:backup][:existing_backup_file_name_pattern]
+  server_name @node[:db_sqlserver][:server_name]
+  force_restore false
+  zip_backup true
+
+  action :backup
+end

@@ -5,7 +5,7 @@ default web application for IIS.
 
 = REQUIREMENTS:
 
-* win_admin, and sys_monitoring cookbooks
+* utilities, and sys_monitoring cookbooks
 
 = USAGE:
 
@@ -13,6 +13,7 @@ Designed to be run within a RightScale ServerTemplate.
 
 Boot Scripts
   * default - Loads the database and installs the BlogEngine application as the default IIS site
+  * add_monitories - Load custom monitors
 
 Operational Scripts
   * backup_database - Backs up the BlogEngine database to a local machine directory.

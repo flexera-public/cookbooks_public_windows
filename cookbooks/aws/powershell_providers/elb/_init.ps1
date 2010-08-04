@@ -1,4 +1,3 @@
-#
 # Copyright (c) 2010 RightScale Inc
 #
 # Permission is hereby granted, free of charge, to any person obtaining
@@ -20,9 +19,19 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-wmi_query_name_attribute  'Name'
-wmi_query_send_attributes 'CurrentConnections'
-wmi_query                 "Select #{wmi_query_name_attribute},#{wmi_query_send_attributes} from Win32_PerfRawData_W3SVC_WebService where Name!='_Total'"
-collectd_plugin           'iis'
-collectd_type             'iis_connections'
-collectd_type_instance    'current'
+$aws_sdk = "AWS SDK for .NET"
+
+#check to see if the package is already installed
+if (Test-Path (${env:programfiles(x86)}+"\"+$aws_sdk)) { 
+  $aws_sdk_path = ${env:programfiles(x86)}+"\"+$aws_sdk 
+} Elseif (Test-Path (${env:programfiles}+"\"+$aws_sdk)) { 
+  $aws_sdk_path = ${env:programfiles}+"\"+$aws_sdk 
+}
+
+if ($aws_sdk_path -eq $null) {
+  Write-Error "*** AWS SDK for .NET package is not installed on the system. Aborting."
+  exit 12
+}
+
+#use the AWS SDK dll
+Add-Type -Path "$aws_sdk_path\bin\AWSSDK.dll"

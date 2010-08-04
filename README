@@ -2,6 +2,8 @@
 
 = DESCRIPTION
 
+This repository includes cookbooks used by RightScale's Windows Chef ServerTemplates.
+
 == Synopsis
 
 RightScale now supports server configuration using the open source integration 
@@ -23,10 +25,3 @@ future.
 
 * [1] Chef is http://wiki.opscode.com/display/chef/Home
 
-= LICENSE
-
-<b>RightScale Premium Cookbooks</b>
-
-Copyright:: Copyright (c) 2010 RightScale, Inc.
-
-All rights reserved - Do Not Redistribute

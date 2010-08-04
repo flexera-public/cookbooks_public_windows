@@ -3,9 +3,9 @@ maintainer_email "support@rightscale.com"
 license          IO.read(File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'LICENSE')))
 description      "Install and configure the BlogEngine application, see http://www.dotnetblogengine.net"
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.rdoc'))
-version          "0.3.13"
+version          "0.3.14"
 
-depends 'win_admin'
+depends 'utilities'
 depends 'sys_monitoring'
 
 recipe 'blog_engine::default', 'Loads the database and installs the BlogEngine application as the default IIS site'
@@ -14,14 +14,14 @@ recipe "blog_engine::restore_database", "Restores the BlogEngine database from a
 recipe "blog_engine::drop_database", "Drops the BlogEngine database."
 recipe "blog_engine::add_monitors", "Adds monitors for BlogEngine demo."
 
-attribute 'win_admin/admin_password',
+attribute 'utilities/admin_password',
   :display_name => 'New administrator password',
   :description => 'New administrator password',
   :recipes => ["blog_engine::default"]
 
 attribute "db_sqlserver/server_name",
   :display_name => "SQL Server instance network name",
-  :description => "The network name of the SQL Server instance used by recipes.",
+  :description => "The network name of the SQL Server instance used by recipes. Ex: localhost\SQLEXPRESS",
   :default => "localhost\\SQLEXPRESS",
   :recipes => ["blog_engine::default", "blog_engine::backup_database", "blog_engine::restore_database", "blog_engine::drop_database"]
 

@@ -1,0 +1,100 @@
+{
+  "replacing": {
+
+  },
+  "recipes": {
+    "utilities::install_firefox": "Installs Mozilla Firefox 3.6",
+    "utilities::install_ruby": "Installs Ruby",
+    "utilities::install_7zip": "Installs 7-Zip",
+    "utilities::system_reboot": "Reboots the system",
+    "utilities::delete_scheduled_task": "Deletes the 'rs_scheduled_task' scheduled task under the 'administrator' user. Uses the SCHTASKS Windows command",
+    "utilities::default": "Not yet implemented",
+    "utilities::create_scheduled_task": "Creates the 'rs_scheduled_task' scheduled task under the 'administrator' user. Uses the SCHTASKS Windows command",
+    "utilities::change_admin_password": "Changes the administrator password",
+    "utilities::system_shutdown": "Shuts down the system"
+  },
+  "groupings": {
+
+  },
+  "long_description": "= DESCRIPTION:\n\nWindows utilities recipes.\n\n= ATTRIBUTES:\n\nSee metadata.rb\n\n= USAGE:\n\nDesigned to be run within a RightScale ServerTemplate\n",
+  "recommendations": {
+
+  },
+  "license": "Copyright (c) 2010 RightScale, Inc.\n\nPermission is hereby granted, free of charge, to any person obtaining\na copy of this software and associated documentation files (the\n'Software'), to deal in the Software without restriction, including\nwithout limitation the rights to use, copy, modify, merge, publish,\ndistribute, sublicense, and/or sell copies of the Software, and to\npermit persons to whom the Software is furnished to do so, subject to\nthe following conditions:\n\nThe above copyright notice and this permission notice shall be\nincluded in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,\nEXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF\nMERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.\nIN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY\nCLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,\nTORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE\nSOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n\n",
+  "attributes": {
+    "schtasks/daily_time": {
+      "required": "optional",
+      "calculated": false,
+      "choice": [
+
+      ],
+      "default": "",
+      "type": "string",
+      "recipes": [
+        "utilities::create_scheduled_task"
+      ],
+      "display_name": "Task daily time",
+      "description": "The time of the day, based on the server's timezone, to run the task when the 'Hourly frequency' input is set to 24. Format: hh:mm (e.g., 22:30)"
+    },
+    "utilities/admin_password": {
+      "required": "required",
+      "calculated": false,
+      "choice": [
+
+      ],
+      "type": "string",
+      "recipes": [
+        "utilities::change_admin_password",
+        "utilities::create_scheduled_task"
+      ],
+      "display_name": "New administrator password",
+      "description": "New administrator password"
+    },
+    "schtasks/hourly_frequency": {
+      "required": "required",
+      "calculated": false,
+      "choice": [
+
+      ],
+      "type": "string",
+      "recipes": [
+        "utilities::create_scheduled_task"
+      ],
+      "display_name": "Task Hourly frequency",
+      "description": "Defines the task frequency in hours. Valid values: 1 up to 24. When 24 is specified the 'Task daily time' input is required also."
+    },
+    "schtasks/command": {
+      "required": "required",
+      "calculated": false,
+      "choice": [
+
+      ],
+      "type": "string",
+      "recipes": [
+        "utilities::create_scheduled_task"
+      ],
+      "display_name": "Task command",
+      "description": "Defines the shell command to run. (e.g., dir >> c:\\dir.txt)"
+    }
+  },
+  "maintainer": "RightScale, Inc.",
+  "suggestions": {
+
+  },
+  "dependencies": {
+
+  },
+  "maintainer_email": "support@rightscale.com",
+  "conflicting": {
+
+  },
+  "platforms": {
+
+  },
+  "description": "Windows Admin recipes and providers",
+  "name": "utilities",
+  "version": "0.3.2",
+  "providing": {
+
+  }
+}

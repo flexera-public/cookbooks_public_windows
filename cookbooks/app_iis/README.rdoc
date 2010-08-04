@@ -1,0 +1,14 @@
+= DESCRIPTION:
+
+Windows IIS recipes
+
+= REQUIREMENTS:
+
+
+= ATTRIBUTES: 
+
+See metadata.rb
+
+= USAGE:
+
+Designed to be run within a RightScale ServerTemplate
