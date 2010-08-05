@@ -1,3 +1,4 @@
+#
 # Copyright (c) 2010 RightScale Inc
 #
 # Permission is hereby granted, free of charge, to any person obtaining
@@ -19,8 +20,22 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-# Drop the demo database.
-blog_engine_database "BlogEngine" do
-  server_name @node[:db_sqlserver][:server_name]
-  action :drop
+# Collect and send disk usage
+#
+# === Return
+# true:: Always return true
+def run
+  drives = execute_wmi_query("Select deviceid, freespace, size from win32_logicaldisk")
+  for drive in drives do
+    if drive.deviceid =~ /^(\w):$/
+      drive_letter = $1
+      free_space_val = drive.freespace
+      drive_size_val = drive.size
+      if is_number?(free_space_val) && is_number?(drive_size_val)
+        used_space = drive_size_val.to_i - free_space_val.to_i
+        @logger.debug("Drive #{drive_letter}: has #{free_space_val} free and #{used_space} used space")
+        gauge('df', '', 'df', "drive_#{drive_letter}", [ used_space, free_space_val.to_i ])
+      end
+    end
+  end
 end

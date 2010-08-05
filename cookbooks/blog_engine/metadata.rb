@@ -3,7 +3,7 @@ maintainer_email "support@rightscale.com"
 license          IO.read(File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'LICENSE')))
 description      "Install and configure the BlogEngine application, see http://www.dotnetblogengine.net"
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.rdoc'))
-version          "0.3.1"
+version          "0.3.13"
 
 depends 'win_admin'
 depends 'sys_monitoring'
@@ -12,6 +12,7 @@ recipe 'blog_engine::default', 'Loads the database and installs the BlogEngine a
 recipe "blog_engine::backup_database", "Backs up the BlogEngine database to a local machine directory."
 recipe "blog_engine::restore_database", "Restores the BlogEngine database from a local machine directory."
 recipe "blog_engine::drop_database", "Drops the BlogEngine database."
+recipe "blog_engine::add_monitors", "Adds monitors for BlogEngine demo."
 
 attribute 'win_admin/admin_password',
   :display_name => 'New administrator password',

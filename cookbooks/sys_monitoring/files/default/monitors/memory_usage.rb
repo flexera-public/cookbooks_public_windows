@@ -1,3 +1,4 @@
+#
 # Copyright (c) 2010 RightScale Inc
 #
 # Permission is hereby granted, free of charge, to any person obtaining
@@ -19,8 +20,9 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-# Drop the demo database.
-blog_engine_database "BlogEngine" do
-  server_name @node[:db_sqlserver][:server_name]
-  action :drop
-end
+wmi_query                 'Select FreePhysicalMemory from Win32_OperatingSystem'
+wmi_query_send_attributes 'FreePhysicalMemory'
+collectd_plugin           'memory'
+collectd_type             'memory'
+collectd_type_instance    'free'
+collectd_units_factor     1024

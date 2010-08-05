@@ -1,30 +1,39 @@
 {
-    "replacing": {
-    },
-    "platforms": {
-    },
-    "groupings": {
-    },
-    "attributes": {
-    },
-    "long_description": "= DESCRIPTION:\n\nEnable monitoring\n\n= USAGE:\n\nAdd to ServerTemplate to enable monitoring on instances using it.\n\nBoot Scripts\n  * default - Install monitoring plugin\n",
-    "recommendations": {
-    },
-    "license": "Copyright (c) 2009 RightScale, Inc.\n\nAll rights reserved - Do Not Redistribute\n",
-    "recipes": {
-      "sys_monitoring::default": "Install monitoring plugin"
-    },
-    "maintainer": "RightScale, Inc.",
-    "suggestions": {
-    },
-    "dependencies": {
-    },
-    "version": "0.3.0",
-    "maintainer_email": "support@rightscale.com",
-    "conflicting": {
-    },
-    "description": "Send collectd data to RightScale",
-    "name": "sys_monitoring",
-    "providing": {
-    }
+  "maintainer": "RightScale, Inc.",
+  "recipes": {
+    "sys_monitoring::default": "Install monitoring plugin"
+  },
+  "suggestions": {
+
+  },
+  "platforms": {
+
+  },
+  "maintainer_email": "support@rightscale.com",
+  "attributes": {
+
+  },
+  "conflicting": {
+
+  },
+  "license": "Copyright (c) 2009 RightScale, Inc.\n\nAll rights reserved - Do Not Redistribute\n",
+  "providing": {
+
+  },
+  "dependencies": {
+
+  },
+  "version": "0.3.13",
+  "replacing": {
+
+  },
+  "description": "Send collectd data to RightScale",
+  "name": "sys_monitoring",
+  "groupings": {
+
+  },
+  "long_description": "= DESCRIPTION:\n\nEnable monitoring\n\n= USAGE:\n\nAdd to ServerTemplate to enable monitoring on instances using it.\n\nBoot Scripts\n  * default - Install monitoring plugin\n",
+  "recommendations": {
+
   }
+}

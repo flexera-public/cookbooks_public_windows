@@ -19,8 +19,10 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-# Drop the demo database.
-blog_engine_database "BlogEngine" do
-  server_name @node[:db_sqlserver][:server_name]
-  action :drop
+require 'fileutils'
+
+ruby 'setup BlogEngine monitoring' do
+  src_plugin_dir_path = File.join(File.dirname(__FILE__), '..', 'files',  'default', 'monitors', '.')
+  dst_plugin_dir_path = ENV['RS_MONITORS_DIR']
+  FileUtils.cp_r(src_plugin_dir_path, dst_plugin_dir_path)
 end

@@ -21,12 +21,12 @@
 
 require 'fileutils'
 
-# Install collectd gem
+# Copy collectd and monitor library file(s).
 ruby 'setup monitoring' do
-  src_collectd_dir_path = File.join(File.dirname(__FILE__), '..', 'files', 'default', 'collectd')
-  dst_collectd_dir_path = File.expand_path(File.join(RightScale::RightLinkConfig[:rs_root_path], '..', 'RightLinkService', 'scripts', 'lib', 'collectd'))
-  FileUtils.mkdir_p(dst_collectd_dir_path)
-  FileUtils.cp_r(File.join(src_collectd_dir_path, '.'), dst_collectd_dir_path)
+  src_dir_path = File.join(File.dirname(__FILE__), '..', 'files', 'default')
+  dst_dir_path = File.expand_path(File.join(RightScale::RightLinkConfig[:rs_root_path], '..', 'RightLinkService', 'scripts', 'lib'))
+  FileUtils.mkdir_p(dst_dir_path)
+  FileUtils.cp_r(File.join(src_dir_path, '.'), dst_dir_path)
 end
 
 # Enable monitoring in the dashboard

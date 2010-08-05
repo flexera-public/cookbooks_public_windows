@@ -1,3 +1,4 @@
+#
 # Copyright (c) 2010 RightScale Inc
 #
 # Permission is hereby granted, free of charge, to any person obtaining
@@ -19,8 +20,19 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-# Drop the demo database.
-blog_engine_database "BlogEngine" do
-  server_name @node[:db_sqlserver][:server_name]
-  action :drop
-end
+wmi_query_name_attribute  'Name'
+wmi_query_send_attributes ['CGIRequestsPerSec',       'CopyRequestsPerSec',
+                           'DeleteRequestsPerSec',    'GetRequestsPerSec',
+                           'HeadRequestsPerSec',      'ISAPIExtensionRequestsPerSec',
+                           'LockRequestsPerSec',      'MkcolRequestsPerSec',
+                           'MoveRequestsPerSec',      'OptionsRequestsPerSec',
+                           'PostRequestsPerSec',      'PropfindRequestsPerSec',
+                           'ProppatchRequestsPerSec', 'PutRequestsPerSec',
+                           'SearchRequestsPerSec',    'TraceRequestsPerSec',
+                           'UnlockRequestsPerSec']
+wmi_query_required_send   ['get', 'post']
+wmi_query                 "Select #{wmi_query_name_attribute},#{wmi_query_send_attributes.join(",")} from Win32_PerfRawData_W3SVC_WebService where Name!='_Total'"
+collectd_plugin           'iis'
+collectd_type             'iis_requests'
+collectd_type_instance    /\A(.*)RequestsPerSec\z/
+collectd_sender           :counter

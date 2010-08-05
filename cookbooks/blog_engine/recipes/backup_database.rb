@@ -20,7 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 # loads the demo database from cookbook-relative backup file.
-blog_engine_powershell_database "BlogEngine" do
+blog_engine_database "BlogEngine" do
   machine_type = @node[:kernel][:machine]
 
   backup_dir_path @node[:db_sqlserver][:backup][:database_backup_dir]

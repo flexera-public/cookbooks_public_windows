@@ -38,21 +38,21 @@ unless @node[:boot_run]
   end
 
   # load the demo database from deployed SQL script.
-  blog_engine_powershell_database "master" do
+  blog_engine_database "master" do
     server_name @node[:db_sqlserver][:server_name]
     commands ["CREATE DATABASE [BlogEngine]"]
     action :run_command
   end
 
   # load the initial demo database from deployed SQL script.
-  blog_engine_powershell_database "BlogEngine" do
+  blog_engine_database "BlogEngine" do
     server_name @node[:db_sqlserver][:server_name]
     script_path "c:\\inetpub\\wwwroot\\setup\\SQLServer\\MSSQLSetup1.5.0.0.sql"
     action :run_script
   end
 
   # load the initial demo database from deployed SQL script.
-  blog_engine_powershell_database "BlogEngine" do
+  blog_engine_database "BlogEngine" do
     server_name @node[:db_sqlserver][:server_name]
     commands ["CREATE USER [NetworkService] FOR LOGIN [NT AUTHORITY\\NETWORK SERVICE]",
               "EXEC sp_addrolemember 'db_datareader', 'NetworkService'",
