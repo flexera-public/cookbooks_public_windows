@@ -29,7 +29,7 @@ db_sqlserver_database @node[:db_sqlserver][:database_name] do
   backup_dir_path @node[:db_sqlserver][:backup][:database_backup_dir]
   existing_backup_file_name_pattern @node[:db_sqlserver][:backup][:existing_backup_file_name_pattern]
   server_name @node[:db_sqlserver][:server_name]
-  force_restore false
+  force_restore @node[:db_sqlserver][:restore][:force_restore] == 'true'
 
   action :restore
 end

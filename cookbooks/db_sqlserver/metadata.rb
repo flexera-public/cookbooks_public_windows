@@ -44,6 +44,13 @@ attribute "db_sqlserver/backup/existing_backup_file_name_pattern",
   :description => "Wildcard file matching pattern (i.e. not a Regex) with Powershell-style string format arguments for finding backup files. The 0 argument represents the database name and the rest of the pattern should match the file names generated from the backup_file_name_format. Ex: {0}_*.bak",
   :default => "{0}_*.bak",
   :recipes => ["db_sqlserver::default", "db_sqlserver::import_dump_from_s3", "db_sqlserver::backup", "db_sqlserver::backup_to_s3", "db_sqlserver::restore"]
+
+attribute "db_sqlserver/restore/force_restore",
+  :display_name => "Force restore",
+  :description => "Whether to force restoring backup on top of any pre-existing database",
+  :recipes => ["db_sqlserver::restore"],
+  :choice => ['true', 'false'],
+  :default => "false"
   
 attribute "s3/file",
   :display_name => "Sql dump file",

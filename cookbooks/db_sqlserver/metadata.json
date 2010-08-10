@@ -131,6 +131,21 @@
       "display_name": "Sql dump file",
       "description": "Sql dump file to be retrieved from the s3 bucket. Ex: production-dump.sql or production-dump.sql.zip"
     },
+    "db_sqlserver/restore/force_restore": {
+      "required": "optional",
+      "calculated": false,
+      "choice": [
+        "true",
+        "false"
+      ],
+      "default": "false",
+      "type": "string",
+      "recipes": [
+        "db_sqlserver::restore"
+      ],
+      "display_name": "Force restore",
+      "description": "Whether to force restoring backup on top of any pre-existing database"
+    },
     "db_sqlserver/database_name": {
       "required": "required",
       "calculated": false,
