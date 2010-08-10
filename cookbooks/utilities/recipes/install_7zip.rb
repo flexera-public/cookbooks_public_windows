@@ -19,7 +19,7 @@ powershell "Installs 7zip" do
     }
 
     if ($7zip_path -ne $null) {
-      Write-Output "7-Zip package is already installed in [$7zip_path]. Skipping instalation."
+      Write-Output "7-Zip package is already installed in [$7zip_path]. Skipping installation."
       exit 0
     }
   
@@ -32,6 +32,9 @@ powershell "Installs 7zip" do
       [environment]::SetEnvironmentvariable("Path", $env:Path+";"+${env:programfiles(x86)}+"\7-Zip", "Machine")
     } Elseif (Test-Path (${env:programfiles}+"\7-Zip")) { 
       [environment]::SetEnvironmentvariable("Path", $env:Path+";"+${env:programfiles}+"\7-Zip", "Machine")
+    } Else {
+      Write-Error "Failed to install 7-Zip. Aborting."
+      exit 19
     }
 POWERSHELL_SCRIPT
 
