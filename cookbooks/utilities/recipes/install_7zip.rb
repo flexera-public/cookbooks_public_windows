@@ -11,6 +11,18 @@ powershell "Installs 7zip" do
 
   # Create the powershell script
   powershell_script = <<'POWERSHELL_SCRIPT'
+    #check to see if the package is already installed
+    if (Test-Path (${env:programfiles(x86)}+"\7-Zip")) { 
+      $7zip_path = ${env:programfiles(x86)}+"\7-Zip" 
+    } Elseif (Test-Path (${env:programfiles}+"\7-Zip")) { 
+      $7zip_path = ${env:programfiles}+"\7-Zip" 
+    }
+
+    if ($7zip_path -ne $null) {
+      Write-Output "7-Zip package is already installed in [$7zip_path]. Skipping instalation."
+      exit 0
+    }
+  
     cd "$env:ATTACHMENTS_PATH"
     $file="7z465.exe"
     cmd /c $file /S
