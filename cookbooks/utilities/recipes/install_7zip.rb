@@ -17,9 +17,9 @@ powershell "Installs 7zip" do
 
     #Permanently update windows Path
     if (Test-Path ${env:programfiles(x86)}) { 
-      [environment]::SetEnvironmentvariable("Path", $env:Path+";"+$env:programfiles(x86)+"\7-Zip", "Machine")
+      [environment]::SetEnvironmentvariable("Path", $env:Path+";"+${env:programfiles(x86)}+"\7-Zip", "Machine")
     } Elseif (Test-Path ${env:programfiles}) { 
-      [environment]::SetEnvironmentvariable("Path", $env:Path+";"+$env:programfiles+"\7-Zip", "Machine")
+      [environment]::SetEnvironmentvariable("Path", $env:Path+";"+${env:programfiles}+"\7-Zip", "Machine")
     }
 POWERSHELL_SCRIPT
 
