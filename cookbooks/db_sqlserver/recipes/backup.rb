@@ -31,7 +31,7 @@ db_sqlserver_database @node[:db_sqlserver][:database_name] do
   existing_backup_file_name_pattern @node[:db_sqlserver][:backup][:existing_backup_file_name_pattern]
   server_name @node[:db_sqlserver][:server_name]
   force_restore false
-  zip_backup true
+  zip_backup false
 
   action :backup
 end
