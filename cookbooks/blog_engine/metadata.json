@@ -1,7 +1,5 @@
 {
-  "replacing": {
-
-  },
+  "maintainer": "RightScale, Inc.",
   "recipes": {
     "blog_engine::default": "Loads the database and installs the BlogEngine application as the default IIS site",
     "blog_engine::restore_database": "Restores the BlogEngine database from a local machine directory.",
@@ -9,54 +7,53 @@
     "blog_engine::add_monitors": "Adds monitors for BlogEngine demo.",
     "blog_engine::backup_database": "Backs up the BlogEngine database to a local machine directory."
   },
-  "groupings": {
+  "suggestions": {
 
   },
-  "long_description": "= DESCRIPTION:\n\nLoads the BlogEngine data into the local SQL Server database and installs the BlogEngine application as the\ndefault web application for IIS.\n\n= REQUIREMENTS:\n\n* utilities, and sys_monitoring cookbooks\n\n= USAGE:\n\nDesigned to be run within a RightScale ServerTemplate.\n\nBoot Scripts\n  * default - Loads the database and installs the BlogEngine application as the default IIS site\n  * add_monitories - Load custom monitors\n\nOperational Scripts\n  * backup_database - Backs up the BlogEngine database to a local machine directory.\n  * restore_database - Restores the BlogEngine database from a local machine directory.\n  * drop_database - Drops the BlogEngine database.\n",
-  "recommendations": {
+  "platforms": {
 
   },
-  "license": "Copyright (c) 2010 RightScale, Inc.\n\nPermission is hereby granted, free of charge, to any person obtaining\na copy of this software and associated documentation files (the\n'Software'), to deal in the Software without restriction, including\nwithout limitation the rights to use, copy, modify, merge, publish,\ndistribute, sublicense, and/or sell copies of the Software, and to\npermit persons to whom the Software is furnished to do so, subject to\nthe following conditions:\n\nThe above copyright notice and this permission notice shall be\nincluded in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,\nEXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF\nMERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.\nIN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY\nCLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,\nTORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE\nSOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n\n",
+  "maintainer_email": "support@rightscale.com",
   "attributes": {
-    "db_sqlserver/backup/existing_backup_file_name_pattern": {
+    "db_sqlserver\/backup\/existing_backup_file_name_pattern": {
       "required": "optional",
       "calculated": false,
-      "choice": [
-
-      ],
       "default": "{0}_*.bak",
+      "choice": [
+
+      ],
       "type": "string",
       "recipes": [
         "blog_engine::default",
         "blog_engine::backup_database",
         "blog_engine::restore_database"
       ],
-      "display_name": "Pattern matching backup file names",
-      "description": "Wildcard file matching pattern (i.e. not a Regex) with Powershell-style string format arguments for finding backup files. The 0 argument represents the database name and the rest of the pattern should match the file names generated from the backup_file_name_format."
+      "description": "Wildcard file matching pattern (i.e. not a Regex) with Powershell-style string format arguments for finding backup files. The 0 argument represents the database name and the rest of the pattern should match the file names generated from the backup_file_name_format.",
+      "display_name": "Pattern matching backup file names"
     },
-    "db_sqlserver/backup/backup_file_name_format": {
+    "db_sqlserver\/backup\/backup_file_name_format": {
       "required": "optional",
       "calculated": false,
-      "choice": [
-
-      ],
       "default": "{0}_{1}.bak",
+      "choice": [
+
+      ],
       "type": "string",
       "recipes": [
         "blog_engine::default",
         "blog_engine::backup_database",
         "blog_engine::restore_database"
       ],
-      "display_name": "Backup file name format",
-      "description": "Format string with Powershell-style string format arguments for creating backup files. The 0 argument represents the database name and the 1 argument represents a generated time stamp."
+      "description": "Format string with Powershell-style string format arguments for creating backup files. The 0 argument represents the database name and the 1 argument represents a generated time stamp.",
+      "display_name": "Backup file name format"
     },
-    "db_sqlserver/server_name": {
+    "db_sqlserver\/server_name": {
       "required": "optional",
       "calculated": false,
+      "default": "localhost\\SQLEXPRESS",
       "choice": [
 
       ],
-      "default": "localhost\\SQLEXPRESS",
       "type": "string",
       "recipes": [
         "blog_engine::default",
@@ -64,11 +61,11 @@
         "blog_engine::restore_database",
         "blog_engine::drop_database"
       ],
-      "display_name": "SQL Server instance network name",
-      "description": "The network name of the SQL Server instance used by recipes. Ex: localhostSQLEXPRESS"
+      "description": "The network name of the SQL Server instance used by recipes. Ex: localhostSQLEXPRESS",
+      "display_name": "SQL Server instance network name"
     },
-    "utilities/admin_password": {
-      "required": "optional",
+    "utilities\/admin_password": {
+      "required": "required",
       "calculated": false,
       "choice": [
 
@@ -77,27 +74,30 @@
       "recipes": [
         "blog_engine::default"
       ],
-      "display_name": "New administrator password",
-      "description": "New administrator password"
+      "description": "New administrator password",
+      "display_name": "New administrator password"
     },
-    "db_sqlserver/backup/database_backup_dir": {
+    "db_sqlserver\/backup\/database_backup_dir": {
       "required": "optional",
       "calculated": false,
+      "default": "c:\\datastore\\sqlserver\\databases",
       "choice": [
 
       ],
-      "default": "c:\\datastore\\sqlserver\\databases",
       "type": "string",
       "recipes": [
         "blog_engine::backup_database",
         "blog_engine::restore_database"
       ],
-      "display_name": "SQL Server backup .bak directory",
-      "description": "The local drive path or UNC path to the directory which will contain new SQL Server database backup (.bak) files. Note that network drives are not supported by SQL Server."
+      "description": "The local drive path or UNC path to the directory which will contain new SQL Server database backup (.bak) files. Note that network drives are not supported by SQL Server.",
+      "display_name": "SQL Server backup .bak directory"
     }
   },
-  "maintainer": "RightScale, Inc.",
-  "suggestions": {
+  "conflicting": {
+
+  },
+  "license": "Copyright (c) 2010 RightScale, Inc.\n\nPermission is hereby granted, free of charge, to any person obtaining\na copy of this software and associated documentation files (the\n'Software'), to deal in the Software without restriction, including\nwithout limitation the rights to use, copy, modify, merge, publish,\ndistribute, sublicense, and\/or sell copies of the Software, and to\npermit persons to whom the Software is furnished to do so, subject to\nthe following conditions:\n\nThe above copyright notice and this permission notice shall be\nincluded in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,\nEXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF\nMERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.\nIN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY\nCLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,\nTORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE\nSOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n\n",
+  "providing": {
 
   },
   "dependencies": {
@@ -108,17 +108,17 @@
 
     ]
   },
-  "maintainer_email": "support@rightscale.com",
-  "conflicting": {
+  "version": "0.3.15",
+  "replacing": {
 
   },
-  "platforms": {
-
-  },
-  "description": "Install and configure the BlogEngine application, see http://www.dotnetblogengine.net",
+  "description": "Install and configure the BlogEngine application, see http:\/\/www.dotnetblogengine.net",
   "name": "blog_engine",
-  "version": "0.3.14",
-  "providing": {
+  "groupings": {
+
+  },
+  "long_description": "= DESCRIPTION:\n\nLoads the BlogEngine data into the local SQL Server database and installs the BlogEngine application as the\ndefault web application for IIS.\n\n= REQUIREMENTS:\n\n* utilities, and sys_monitoring cookbooks\n\n= USAGE:\n\nDesigned to be run within a RightScale ServerTemplate.\n\nBoot Scripts\n  * default - Loads the database and installs the BlogEngine application as the default IIS site\n  * add_monitories - Load custom monitors\n\nOperational Scripts\n  * backup_database - Backs up the BlogEngine database to a local machine directory.\n  * restore_database - Restores the BlogEngine database from a local machine directory.\n  * drop_database - Drops the BlogEngine database.\n",
+  "recommendations": {
 
   }
 }

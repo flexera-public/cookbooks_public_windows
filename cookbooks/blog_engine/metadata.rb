@@ -3,7 +3,7 @@ maintainer_email "support@rightscale.com"
 license          IO.read(File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'LICENSE')))
 description      "Install and configure the BlogEngine application, see http://www.dotnetblogengine.net"
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.rdoc'))
-version          "0.3.14"
+version          "0.3.15"
 
 depends 'utilities'
 depends 'sys_monitoring'
@@ -17,7 +17,8 @@ recipe "blog_engine::add_monitors", "Adds monitors for BlogEngine demo."
 attribute 'utilities/admin_password',
   :display_name => 'New administrator password',
   :description => 'New administrator password',
-  :recipes => ["blog_engine::default"]
+  :recipes => ["blog_engine::default"],
+  :required => "required"
 
 attribute "db_sqlserver/server_name",
   :display_name => "SQL Server instance network name",
