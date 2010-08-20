@@ -25,11 +25,17 @@
 include_recipe 'db_sqlserver::enable_sql_express_service'
 include_recipe 'db_sqlserver::import_dump_from_s3'
 
-# Create default user
-db_sqlserver_database @node[:db_sqlserver][:database_name] do
-  server_name @node[:db_sqlserver][:server_name]
-  commands ["CREATE USER [NetworkService] FOR LOGIN [NT AUTHORITY\\NETWORK SERVICE]",
-    "EXEC sp_addrolemember 'db_datareader', 'NetworkService'",
-    "EXEC sp_addrolemember 'db_datawriter', 'NetworkService'"]
-  action :run_command
+if (@node[:db_sqlserver_default_executed])
+  Chef::Log.info("*** Recipe 'db_sqlserver::default' already executed, skipping...")
+else
+  # Create default user
+  db_sqlserver_database @node[:db_sqlserver][:database_name] do
+    server_name @node[:db_sqlserver][:server_name]
+    commands ["CREATE USER [NetworkService] FOR LOGIN [NT AUTHORITY\\NETWORK SERVICE]",
+      "EXEC sp_addrolemember 'db_datareader', 'NetworkService'",
+      "EXEC sp_addrolemember 'db_datawriter', 'NetworkService'"]
+    action :run_command
+  end
+
+  @node[:db_sqlserver_default_executed] = true
 end

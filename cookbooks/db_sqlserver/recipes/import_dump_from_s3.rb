@@ -22,7 +22,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-if (@node[:boot_run])
+if (@node[:db_sqlserver_import_dump_from_s3_executed])
   Chef::Log.info("*** Recipe 'db_sqlserver::default' already executed, skipping...")
 else
   # download the sql dump
@@ -60,5 +60,5 @@ POWERSHELL_SCRIPT
     action :run_script
   end
 
-  @node[:boot_run] = true
+  @node[:db_sqlserver_import_dump_from_s3_executed] = true
 end
