@@ -37,16 +37,16 @@ else
 
   sql_dump=@node[:s3][:file]
 
-  # unzip the dump file 
-  if (@node[:s3][:file] =~ /(.*)\.zip/)
+  # unpack the dump file. Example: mydump.sql.zip
+  if (@node[:s3][:file] =~ /(.*)\.(zip|7z|rar)/)
     sql_dump=$1
-    Chef::Log.info("*** Trying to unzip the database dump.")
-    powershell "Unzipping "+@node[:s3][:file] do
-      parameters({'ZIPPED_FILE' => @node[:s3][:file]})
+    Chef::Log.info("*** Unpacking database dump.")
+    powershell "Unpacking "+@node[:s3][:file] do
+      parameters({'PACKAGE' => @node[:s3][:file]})
       # Create the powershell script
       powershell_script = <<'POWERSHELL_SCRIPT'
         cd c:/tmp
-        cmd /c 7z x -y "c:/tmp/${env:ZIPPED_FILE}"
+        cmd /c 7z x -y "c:/tmp/${env:PACKAGE}"
 POWERSHELL_SCRIPT
       source(powershell_script)
     end

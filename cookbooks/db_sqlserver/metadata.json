@@ -1,218 +1,210 @@
 {
-  "replacing": {
-
-  },
-  "recipes": {
-    "db_sqlserver::import_dump_from_s3": "Downloads SQL dump from S3 bucket and imports it into database.",
-    "db_sqlserver::enable_sql_express_service": "Enables the SQL Express service if disabled",
-    "db_sqlserver::backup_to_s3": "Backs up database to S3.",
-    "db_sqlserver::default": "Sets up default user.",
-    "db_sqlserver::drop": "Drops a database.",
-    "db_sqlserver::backup": "Backs up database to a local machine directory.",
-    "db_sqlserver::restore": "Restores database from a local machine directory."
-  },
-  "groupings": {
-
-  },
-  "long_description": "= DESCRIPTION:\n\nSQL Server Recipes and Providers\n\n= REQUIREMENTS:\n\nUse on a RightImage which includes SQL Server (2005 or 2008, Express or Standard).\n\n= USAGE:\n\nDesigned to be run within a RightScale ServerTemplate.\n\n",
-  "recommendations": {
-
-  },
-  "license": "Copyright (c) 2010 RightScale, Inc.\n\nPermission is hereby granted, free of charge, to any person obtaining\na copy of this software and associated documentation files (the\n'Software'), to deal in the Software without restriction, including\nwithout limitation the rights to use, copy, modify, merge, publish,\ndistribute, sublicense, and/or sell copies of the Software, and to\npermit persons to whom the Software is furnished to do so, subject to\nthe following conditions:\n\nThe above copyright notice and this permission notice shall be\nincluded in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,\nEXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF\nMERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.\nIN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY\nCLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,\nTORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE\nSOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n\n",
-  "attributes": {
-    "db_sqlserver/backup/existing_backup_file_name_pattern": {
-      "required": "optional",
-      "calculated": false,
-      "choice": [
-
-      ],
-      "default": "{0}_*.bak",
-      "type": "string",
-      "recipes": [
-        "db_sqlserver::default",
-        "db_sqlserver::import_dump_from_s3",
-        "db_sqlserver::backup",
-        "db_sqlserver::backup_to_s3",
-        "db_sqlserver::restore"
-      ],
-      "display_name": "Pattern matching backup file names",
-      "description": "Wildcard file matching pattern (i.e. not a Regex) with Powershell-style string format arguments for finding backup files. The 0 argument represents the database name and the rest of the pattern should match the file names generated from the backup_file_name_format. Ex: {0}_*.bak"
+    "recipes": {
+      "db_sqlserver::restore": "Restores database from a local machine directory.",
+      "db_sqlserver::backup_to_s3": "Backs up database to S3.",
+      "db_sqlserver::enable_sql_service": "Enables the SQL Server service if disabled",
+      "db_sqlserver::default": "Sets up default user and enables SQL service.",
+      "db_sqlserver::backup": "Backs up database to a local machine directory.",
+      "db_sqlserver::import_dump_from_s3": "Downloads SQL dump from S3 bucket and imports it into database.",
+      "db_sqlserver::drop": "Drops a database."
     },
-    "db_sqlserver/backup/backup_file_name_format": {
-      "required": "optional",
-      "calculated": false,
-      "choice": [
-
-      ],
-      "default": "{0}_{1}.bak",
-      "type": "string",
-      "recipes": [
-        "db_sqlserver::default",
-        "db_sqlserver::import_dump_from_s3",
-        "db_sqlserver::backup",
-        "db_sqlserver::backup_to_s3",
-        "db_sqlserver::restore"
-      ],
-      "display_name": "Backup file name format",
-      "description": "Format string with Powershell-style string format arguments for creating backup files. The 0 argument represents the database name and the 1 argument represents a generated time stamp. Ex: {0}_{1}.bak"
+    "groupings": {
     },
-    "db_sqlserver/server_name": {
-      "required": "required",
-      "calculated": false,
-      "choice": [
-
-      ],
-      "type": "string",
-      "recipes": [
-        "db_sqlserver::default",
-        "db_sqlserver::import_dump_from_s3",
-        "db_sqlserver::backup",
-        "db_sqlserver::backup_to_s3",
-        "db_sqlserver::restore",
-        "db_sqlserver::drop"
-      ],
-      "display_name": "SQL Server instance network name",
-      "description": "The network name of the SQL Server instance used by recipes. Ex: localhost\\SQLEXPRESS"
+    "recommendations": {
     },
-    "s3/bucket_backups": {
-      "required": "required",
-      "calculated": false,
-      "choice": [
-
-      ],
-      "type": "string",
-      "recipes": [
-        "db_sqlserver::backup_to_s3"
-      ],
-      "display_name": "Bucket to store backups",
-      "description": "The name of the S3 bucket. Ex: production-bucket-backup"
+    "version": "0.3.7",
+    "maintainer": "RightScale, Inc.",
+    "long_description": "= DESCRIPTION:\n\nSQL Server Recipes and Providers\n\n= REQUIREMENTS:\n\nUse on a RightImage which includes SQL Server (2005 or 2008, Express or Standard).\n\n= USAGE:\n\nDesigned to be run within a RightScale ServerTemplate.\n\n",
+    "description": "MSSQL Recipes and Providers",
+    "suggestions": {
     },
-    "aws/secret_access_key": {
-      "required": "required",
-      "calculated": false,
-      "choice": [
-
-      ],
-      "type": "string",
-      "recipes": [
-        "db_sqlserver::default",
-        "db_sqlserver::import_dump_from_s3",
-        "db_sqlserver::backup_to_s3"
-      ],
-      "display_name": "Secret Access Key",
-      "description": "This is an Amazon credential. Log in to your AWS account at aws.amazon.com to retrieve your access identifiers. Ex: XVdxPgOM4auGcMlPz61IZGotpr9LzzI07tT8s2Ws"
+    "maintainer_email": "support@rightscale.com",
+    "name": "db_sqlserver",
+    "conflicting": {
     },
-    "aws/access_key_id": {
-      "required": "required",
-      "calculated": false,
-      "choice": [
-
-      ],
-      "type": "string",
-      "recipes": [
-        "db_sqlserver::default",
-        "db_sqlserver::import_dump_from_s3",
-        "db_sqlserver::backup_to_s3"
-      ],
-      "display_name": "Access Key Id",
-      "description": "This is an Amazon credential. Log in to your AWS account at aws.amazon.com to retrieve you access identifiers. Ex: 1JHQQ4KVEVM02KVEVM02"
+    "license": "Copyright (c) 2010 RightScale, Inc.\n\nPermission is hereby granted, free of charge, to any person obtaining\na copy of this software and associated documentation files (the\n'Software'), to deal in the Software without restriction, including\nwithout limitation the rights to use, copy, modify, merge, publish,\ndistribute, sublicense, and/or sell copies of the Software, and to\npermit persons to whom the Software is furnished to do so, subject to\nthe following conditions:\n\nThe above copyright notice and this permission notice shall be\nincluded in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,\nEXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF\nMERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.\nIN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY\nCLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,\nTORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE\nSOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n\n",
+    "providing": {
     },
-    "s3/file": {
-      "required": "required",
-      "calculated": false,
-      "choice": [
-
-      ],
-      "type": "string",
-      "recipes": [
-        "db_sqlserver::default",
-        "db_sqlserver::import_dump_from_s3"
-      ],
-      "display_name": "Sql dump file",
-      "description": "Sql dump file to be retrieved from the s3 bucket. Ex: production-dump.sql or production-dump.sql.zip"
+    "dependencies": {
     },
-    "db_sqlserver/restore/force_restore": {
-      "required": "optional",
-      "calculated": false,
-      "choice": [
-        "true",
-        "false"
-      ],
-      "default": "false",
-      "type": "string",
-      "recipes": [
-        "db_sqlserver::restore"
-      ],
-      "display_name": "Force restore",
-      "description": "Whether to force restoring backup on top of any pre-existing database"
+    "platforms": {
     },
-    "db_sqlserver/database_name": {
-      "required": "required",
-      "calculated": false,
-      "choice": [
+    "attributes": {
+      "s3/bucket_backups": {
+        "calculated": false,
+        "type": "string",
+        "choice": [
 
-      ],
-      "type": "string",
-      "recipes": [
-        "db_sqlserver::default",
-        "db_sqlserver::import_dump_from_s3",
-        "db_sqlserver::backup",
-        "db_sqlserver::backup_to_s3",
-        "db_sqlserver::restore",
-        "db_sqlserver::drop"
-      ],
-      "display_name": "SQL Server database name",
-      "description": "SQL Server database(schema) name. Ex: production"
+        ],
+        "description": "The name of the S3 bucket. Ex: production-bucket-backup",
+        "display_name": "Bucket to store backups",
+        "recipes": [
+          "db_sqlserver::backup_to_s3"
+        ],
+        "required": "required"
+      },
+      "db_sqlserver/backup/existing_backup_file_name_pattern": {
+        "default": "{0}_*.bak",
+        "calculated": false,
+        "type": "string",
+        "choice": [
+
+        ],
+        "description": "Wildcard file matching pattern (i.e. not a Regex) with Powershell-style string format arguments for finding backup files. The 0 argument represents the database name and the rest of the pattern should match the file names generated from the backup_file_name_format. Ex: {0}_*.bak",
+        "display_name": "Pattern matching backup file names",
+        "recipes": [
+          "db_sqlserver::default",
+          "db_sqlserver::import_dump_from_s3",
+          "db_sqlserver::backup",
+          "db_sqlserver::backup_to_s3",
+          "db_sqlserver::restore"
+        ],
+        "required": "optional"
+      },
+      "db_sqlserver/backup/backup_file_name_format": {
+        "default": "{0}_{1}.bak",
+        "calculated": false,
+        "type": "string",
+        "choice": [
+
+        ],
+        "description": "Format string with Powershell-style string format arguments for creating backup files. The 0 argument represents the database name and the 1 argument represents a generated time stamp. Ex: {0}_{1}.bak",
+        "display_name": "Backup file name format",
+        "recipes": [
+          "db_sqlserver::default",
+          "db_sqlserver::import_dump_from_s3",
+          "db_sqlserver::backup",
+          "db_sqlserver::backup_to_s3",
+          "db_sqlserver::restore"
+        ],
+        "required": "optional"
+      },
+      "db_sqlserver/server_name": {
+        "calculated": false,
+        "type": "string",
+        "choice": [
+
+        ],
+        "description": "The network name of the SQL Server instance used by recipes. Ex: 'localhost\\SQLEXPRESS' for SQL EXPRESS or 'localhost' for SQL STANDARD",
+        "display_name": "SQL Server instance network name",
+        "recipes": [
+          "db_sqlserver::default",
+          "db_sqlserver::import_dump_from_s3",
+          "db_sqlserver::backup",
+          "db_sqlserver::backup_to_s3",
+          "db_sqlserver::restore",
+          "db_sqlserver::drop"
+        ],
+        "required": "required"
+      },
+      "aws/access_key_id": {
+        "calculated": false,
+        "type": "string",
+        "choice": [
+
+        ],
+        "description": "This is an Amazon credential. Log in to your AWS account at aws.amazon.com to retrieve you access identifiers. Ex: 1JHQQ4KVEVM02KVEVM02",
+        "display_name": "Access Key Id",
+        "recipes": [
+          "db_sqlserver::default",
+          "db_sqlserver::import_dump_from_s3",
+          "db_sqlserver::backup_to_s3"
+        ],
+        "required": "required"
+      },
+      "s3/file": {
+        "calculated": false,
+        "type": "string",
+        "choice": [
+
+        ],
+        "description": "Sql dump file to be retrieved from the s3 bucket. Ex: production-dump.sql or production-dump.sql.zip",
+        "display_name": "Sql dump file",
+        "recipes": [
+          "db_sqlserver::default",
+          "db_sqlserver::import_dump_from_s3"
+        ],
+        "required": "required"
+      },
+      "db_sqlserver/restore/force_restore": {
+        "default": "false",
+        "calculated": false,
+        "type": "string",
+        "choice": [
+          "true",
+          "false"
+        ],
+        "description": "Whether to force restoring backup on top of any pre-existing database",
+        "display_name": "Force restore",
+        "recipes": [
+          "db_sqlserver::restore"
+        ],
+        "required": "optional"
+      },
+      "aws/secret_access_key": {
+        "calculated": false,
+        "type": "string",
+        "choice": [
+
+        ],
+        "description": "This is an Amazon credential. Log in to your AWS account at aws.amazon.com to retrieve your access identifiers. Ex: XVdxPgOM4auGcMlPz61IZGotpr9LzzI07tT8s2Ws",
+        "display_name": "Secret Access Key",
+        "recipes": [
+          "db_sqlserver::default",
+          "db_sqlserver::import_dump_from_s3",
+          "db_sqlserver::backup_to_s3"
+        ],
+        "required": "required"
+      },
+      "db_sqlserver/database_name": {
+        "calculated": false,
+        "type": "string",
+        "choice": [
+
+        ],
+        "description": "SQL Server database(schema) name. Ex: production",
+        "display_name": "SQL Server database name",
+        "recipes": [
+          "db_sqlserver::default",
+          "db_sqlserver::import_dump_from_s3",
+          "db_sqlserver::backup",
+          "db_sqlserver::backup_to_s3",
+          "db_sqlserver::restore",
+          "db_sqlserver::drop"
+        ],
+        "required": "required"
+      },
+      "db_sqlserver/backup/database_backup_dir": {
+        "default": "c:\\datastore\\sqlserver\\databases",
+        "calculated": false,
+        "type": "string",
+        "choice": [
+
+        ],
+        "description": "The local drive path or UNC path to the directory which will contain new SQL Server database backup (.bak) files. Note that network drives are not supported by SQL Server.",
+        "display_name": "SQL Server backup .bak directory",
+        "recipes": [
+          "db_sqlserver::backup",
+          "db_sqlserver::backup_to_s3",
+          "db_sqlserver::restore"
+        ],
+        "required": "optional"
+      },
+      "s3/bucket_dump": {
+        "calculated": false,
+        "type": "string",
+        "choice": [
+
+        ],
+        "description": "The name of the S3 bucket. Ex: production-bucket-dumps",
+        "display_name": "Bucket for sql dump",
+        "recipes": [
+          "db_sqlserver::default",
+          "db_sqlserver::import_dump_from_s3"
+        ],
+        "required": "required"
+      }
     },
-    "s3/bucket_dump": {
-      "required": "required",
-      "calculated": false,
-      "choice": [
-
-      ],
-      "type": "string",
-      "recipes": [
-        "db_sqlserver::default",
-        "db_sqlserver::import_dump_from_s3"
-      ],
-      "display_name": "Bucket for sql dump",
-      "description": "The name of the S3 bucket. Ex: production-bucket-dumps"
-    },
-    "db_sqlserver/backup/database_backup_dir": {
-      "required": "optional",
-      "calculated": false,
-      "choice": [
-
-      ],
-      "default": "c:\\datastore\\sqlserver\\databases",
-      "type": "string",
-      "recipes": [
-        "db_sqlserver::backup",
-        "db_sqlserver::backup_to_s3",
-        "db_sqlserver::restore"
-      ],
-      "display_name": "SQL Server backup .bak directory",
-      "description": "The local drive path or UNC path to the directory which will contain new SQL Server database backup (.bak) files. Note that network drives are not supported by SQL Server."
+    "replacing": {
     }
-  },
-  "maintainer": "RightScale, Inc.",
-  "suggestions": {
-
-  },
-  "dependencies": {
-
-  },
-  "maintainer_email": "support@rightscale.com",
-  "conflicting": {
-
-  },
-  "platforms": {
-
-  },
-  "description": "MSSQL Recipes and Providers",
-  "name": "db_sqlserver",
-  "version": "0.3.7",
-  "providing": {
-
   }
-}

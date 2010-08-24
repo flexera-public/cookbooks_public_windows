@@ -6,18 +6,18 @@ long_description IO.read(File.join(File.dirname(__FILE__), 'README.rdoc'))
 version          "0.3.7"
 
 
-recipe 'db_sqlserver::default', 'Sets up default user.'
+recipe 'db_sqlserver::default', 'Sets up default user and enables SQL service.'
 recipe "db_sqlserver::backup", "Backs up database to a local machine directory."
 recipe "db_sqlserver::backup_to_s3", "Backs up database to S3."
 recipe "db_sqlserver::restore", "Restores database from a local machine directory."
 recipe "db_sqlserver::drop", "Drops a database."
 recipe "db_sqlserver::import_dump_from_s3", 'Downloads SQL dump from S3 bucket and imports it into database.'
-recipe "db_sqlserver::enable_sql_express_service", "Enables the SQL Express service if disabled"
+recipe "db_sqlserver::enable_sql_service", "Enables the SQL Server service if disabled"
 
 
 attribute "db_sqlserver/server_name",
   :display_name => "SQL Server instance network name",
-  :description => "The network name of the SQL Server instance used by recipes. Ex: localhost\\SQLEXPRESS",
+  :description => "The network name of the SQL Server instance used by recipes. Ex: 'localhost\\SQLEXPRESS' for SQL EXPRESS or 'localhost' for SQL STANDARD",
   :recipes => ["db_sqlserver::default", "db_sqlserver::import_dump_from_s3", "db_sqlserver::backup", "db_sqlserver::backup_to_s3", "db_sqlserver::restore", "db_sqlserver::drop"],
   :required => "required"
 
@@ -51,7 +51,7 @@ attribute "db_sqlserver/restore/force_restore",
   :recipes => ["db_sqlserver::restore"],
   :choice => ['true', 'false'],
   :default => "false"
-  
+
 attribute "s3/file",
   :display_name => "Sql dump file",
   :description => "Sql dump file to be retrieved from the s3 bucket. Ex: production-dump.sql or production-dump.sql.zip",
