@@ -42,5 +42,7 @@ aws_s3 "upload the latest backup to the s3 bucket" do
   s3_bucket @node[:s3][:bucket_backups]
   # when file_path is a directory, the latest file in the directory will be uploaded
   file_path @node[:db_sqlserver][:backup][:database_backup_dir]
+  # increase default timeout to 30 minutes. Default is 20(1200 seconds)
+  timeout_seconds 1800
   action :put
 end

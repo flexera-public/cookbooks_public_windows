@@ -25,6 +25,7 @@ $secretAccessKey = Get-NewResource secret_access_key
 $s3Bucket = Get-NewResource s3_bucket
 $s3File = Get-NewResource s3_file
 $filePath = Get-NewResource file_path
+$timeoutSeconds = Get-NewResource timeout_seconds
 
 #stop and fail script when a command fails
 $ErrorActionPreference="Stop"
@@ -86,7 +87,13 @@ $request = New-Object -TypeName Amazon.S3.Model.PutObjectRequest
 [void]$request.WithBucketName($s3Bucket)
 [void]$request.WithKey($s3File)
 
-#NOTE: upload defaults to 20 minute timeout.  
+#NOTE: upload defaults to 20 minute timeout.
+if ($timeoutSeconds -is [int])
+{  
+	#timeout is in miliseconds
+	$request.timeout=1000*$timeoutSeconds
+}
+
 #If download fails it will throw an exception and $S3Response will be $null 
 $S3Response = $client.PutObject($request)
 

@@ -33,3 +33,4 @@ attribute :download_dir, :kind_of => [ String ]
 
 #put action
 attribute :file_path, :kind_of => [ String ]
+attribute :timeout_seconds, :kind_of => [ Integer ]
