@@ -34,9 +34,12 @@ end
 powershell "Change IIS physical path for Default Website" do
   # Create the powershell script
   powershell_script = <<'POWERSHELL_SCRIPT'
+  #tell the script to "stop" or "continue" when a command fails
+  $ErrorActionPreference = "stop"
+  
   $checkoutpath=invoke-expression 'Get-ChefNode checkoutpath'
   
-  if (Test-Path $checkoutpath)
+  if (Test-Path $checkoutpath -PathType Container)
   {
   
       # change the physicalPath for the IIS site

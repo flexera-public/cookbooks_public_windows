@@ -9,6 +9,8 @@
 powershell "Start Default Web Site and configure AutoStart" do
   # Create the powershell script
   powershell_script = <<-EOF
+    #tell the script to "stop" or "continue" when a command fails
+    $ErrorActionPreference = "stop"
     # starts the default website on IIS7
     $appcmd_path = $env:systemroot + "\\system32\\inetsrv\\APPCMD.exe"
     $appcmd_exists = Test-Path $appcmd_path
