@@ -1,5 +1,3 @@
-# Cookbook Name:: app_iis
-# Recipe:: default
 #
 # Copyright (c) 2010 RightScale Inc
 #
@@ -21,7 +19,8 @@
 # LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-  
 
+actions :unpack
 
-
+attribute :releases_path, :kind_of => [ String ]
+attribute :package_path, :kind_of => [ String ]
