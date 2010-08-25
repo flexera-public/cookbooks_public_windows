@@ -1,9 +1,9 @@
 maintainer       "RightScale, Inc."
 maintainer_email "support@rightscale.com"
 license          IO.read(File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'LICENSE')))
-description      "MSSQL Recipes and Providers"
+description      "Microsoft SQL Server recipes and providers"
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.rdoc'))
-version          "0.3.7"
+version          "0.3.8"
 
 
 recipe 'db_sqlserver::default', 'Sets up default user and enables SQL service.'
