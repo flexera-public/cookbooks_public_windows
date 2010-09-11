@@ -89,9 +89,10 @@ module RightScale
         log_file = File.join(TEMP_DIR, 'monitoring.log')
         @logger = Logger.new(log_file)
         @logger.level = Logger::INFO
-        
+        require File.join(RightScale::Platform.filesystem.spool_dir, @node[:cloud][:provider], 'user-data')
+
         # create collectd connection to our server.
-        @collectd = Collectd.new(server = '<%= @node[:rightscale][:server][:sketchy] %>',
+        @collectd = Collectd.new(server = ENV['RS_SKETCHY'],
                                  port = RS_HOST_PORT,
                                  host = '<%= @node[:rightscale][:instance_uuid] %>',
                                  interval = SAMPLING_INTERVAL)
