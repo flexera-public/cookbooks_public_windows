@@ -91,7 +91,7 @@ module RightScale
         @logger.level = Logger::INFO
         
         # create collectd connection to our server.
-        @collectd = Collectd.new(server = '<%= @node[:rightscale][:servers][:sketchy] %>',
+        @collectd = Collectd.new(server = '<%= @node[:rightscale][:servers][:sketchy][:hostname] %>',
                                  port = RS_HOST_PORT,
                                  host = '<%= @node[:rightscale][:instance_uuid] %>',
                                  interval = SAMPLING_INTERVAL)
