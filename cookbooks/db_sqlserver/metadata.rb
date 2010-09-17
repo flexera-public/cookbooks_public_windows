@@ -52,7 +52,7 @@ attribute "db_sqlserver/restore/force_restore",
   :choice => ['true', 'false'],
   :default => "false"
 
-attribute "s3/file",
+attribute "s3/file_dump",
   :display_name => "Sql dump file",
   :description => "Sql dump file to be retrieved from the s3 bucket. Ex: production-dump.sql or production-dump.sql.zip",
   :recipes => ["db_sqlserver::default", "db_sqlserver::import_dump_from_s3"],

@@ -30,19 +30,19 @@ else
     access_key_id @node[:aws][:access_key_id]
     secret_access_key @node[:aws][:secret_access_key]
     s3_bucket @node[:s3][:bucket_dump]
-    s3_file @node[:s3][:file]
+    s3_file @node[:s3][:file_dump]
     download_dir "c:/tmp"
     action :get
   end
 
-  sql_dump=@node[:s3][:file]
+  sql_dump=@node[:s3][:file_dump]
 
   # unpack the dump file. Example: mydump.sql.zip
-  if (@node[:s3][:file] =~ /(.*)\.(zip|7z|rar)/)
+  if (@node[:s3][:file_dump] =~ /(.*)\.(zip|7z|rar)/)
     sql_dump=$1
     Chef::Log.info("*** Unpacking database dump.")
-    powershell "Unpacking "+@node[:s3][:file] do
-      parameters({'PACKAGE' => @node[:s3][:file]})
+    powershell "Unpacking "+@node[:s3][:file_dump] do
+      parameters({'PACKAGE' => @node[:s3][:file_dump]})
       # Create the powershell script
       powershell_script = <<'POWERSHELL_SCRIPT'
         cd c:/tmp
