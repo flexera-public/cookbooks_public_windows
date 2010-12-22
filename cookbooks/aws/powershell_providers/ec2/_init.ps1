@@ -19,11 +19,19 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-# upload file to s3
-aws_s3 "upload to s3" do
-  access_key_id @node[:aws][:access_key_id]
-  secret_access_key @node[:aws][:secret_access_key]
-  s3_bucket @node[:s3][:bucket]
-  file_path @node[:aws][:file_path]
-  action :put
-end
+$aws_sdk = "AWS SDK for .NET"
+
+#check to see if the package is already installed
+if (Test-Path (${env:programfiles(x86)}+"\"+$aws_sdk)) { 
+  $aws_sdk_path = ${env:programfiles(x86)}+"\"+$aws_sdk 
+} Elseif (Test-Path (${env:programfiles}+"\"+$aws_sdk)) { 
+  $aws_sdk_path = ${env:programfiles}+"\"+$aws_sdk 
+}
+
+if ($aws_sdk_path -eq $null) {
+  Write-Error "*** AWS SDK for .NET package is not installed on the system. Aborting."
+  exit 12
+}
+
+#use the AWS SDK dll
+Add-Type -Path "$aws_sdk_path\bin\AWSSDK.dll"

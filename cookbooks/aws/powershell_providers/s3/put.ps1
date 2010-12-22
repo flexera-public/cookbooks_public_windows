@@ -60,24 +60,24 @@ $fileObject = [System.IO.FileInfo]$filePath
 #if fileObject is a directory, uploading the latest file from the directory
 if (test-path $fileObject.FullName -PathType Container)
 {
-	Write-Output("***["+$fileObject.FullName+"] is a directory, trying to find the latest file inside.")
-	$latest_file=Get-ChildItem -force $fileObject.FullName | Where-Object { !($_.Attributes -match "Directory") } | Sort-Object LastWriteTime -descending | Select-Object Name, FullName | Select-Object -first 1
-	if ($latest_file -eq $null)
-	{
-	    Write-Error("***["+$fileObject.FullName+"] directory has no file, aborting...")
-    	exit 120
-	}
-	else
-	{
-		$fileObject=$latest_file
-		Write-Output("***The latest file in ["+$fileObject.FullName+"] directory is ["+$fileObject.Name+"]")
-	}
+    Write-Output("***["+$fileObject.FullName+"] is a directory, trying to find the latest file inside.")
+    $latest_file=Get-ChildItem -force $fileObject.FullName | Where-Object { !($_.Attributes -match "Directory") } | Sort-Object LastWriteTime -descending | Select-Object Name, FullName | Select-Object -first 1
+    if ($latest_file -eq $null)
+    {
+        Write-Error("***["+$fileObject.FullName+"] directory has no file, aborting...")
+        exit 120
+    }
+    else
+    {
+        $fileObject=$latest_file
+        Write-Output("***The latest file in ["+$fileObject.FullName+"] directory is ["+$fileObject.Name+"]")
+    }
 }
 
 
 if (($s3File -eq $NULL) -or ($s3File -eq ""))
 {
-	$s3File = $fileObject.Name
+    $s3File = $fileObject.Name
 }
 
 Write-Output("***Uploading file["+$fileObject.Name+"] to bucket[$s3Bucket] as[$s3File]")
@@ -90,8 +90,8 @@ $request = New-Object -TypeName Amazon.S3.Model.PutObjectRequest
 #NOTE: upload defaults to 20 minute timeout.
 if ($timeoutSeconds -is [int])
 {  
-	#timeout is in miliseconds
-	$request.timeout=1000*$timeoutSeconds
+    #timeout is in miliseconds
+    $request.timeout=1000*$timeoutSeconds
 }
 
 #If download fails it will throw an exception and $S3Response will be $null 
@@ -99,10 +99,10 @@ $S3Response = $client.PutObject($request)
 
 if($S3Response -eq $null)
 { 
-	Write-Error "ERROR: Amazon S3 put requrest failed. Aborting..." 
-	exit 121
+    Write-Error "ERROR: Amazon S3 put requrest failed. Aborting..." 
+    exit 121
 }
 else
 {
-	Write-Output "***Upload successfully. AWS Response:"$S3Response
+    Write-Output "***Upload successfully. AWS Response:"$S3Response
 }

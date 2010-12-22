@@ -59,15 +59,19 @@ if (($secretAccessKey -eq $NULL) -or ($secretAccessKey -eq ""))
 
 $client=[Amazon.AWSClientFactory]::CreateAmazonS3Client($accessKeyID,$secretAccessKey)
 
-if (!(Test-Path $downloadDir))
+$targetpath = join-path ($downloadDir) $s3File
+
+if ($targetpath -match '^(.+)\\')
 {
-	Write-output "***Directory [$downloadDir] missing, creating it."
-	New-Item $downloadDir -type directory 
+    $fullpath=$matches[1]
+    if (!(test-path $fullpath -PathType Container))
+    {
+        Write-output "***Directory [$fullpath] missing, creating it."
+        New-Item $fullpath -type directory 
+    }
 }
 
-$targetpath = join-path ($downloadDir) $s3File
 Write-output "***Downloading key[$s3File] from bucket[$s3Bucket] to [$targetpath]"
-
 $get_request = New-Object -TypeName Amazon.S3.Model.GetObjectRequest
 $get_request.BucketName = $s3Bucket
 $get_request.key = $s3File

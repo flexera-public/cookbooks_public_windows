@@ -2,6 +2,7 @@
     "recipes": {
       "aws::deregister_from_elb": "Deregister the instance with an Elastic Load Balancer created in the same ec2 region. Requires recipe: 'aws::default'",
       "aws::default": "Install Amazon Web Services SDK for .NET",
+      "aws::terminate_instance": "Terminates the current instance. Requires recipe: 'aws::default'",
       "aws::register_with_elb": "Register the instance with an Elastic Load Balancer created in the same ec2 region. Requires recipe: 'aws::default'",
       "aws::upload": "Uploads a file to an S3 bucket",
       "aws::download": "Retrieves a file from an S3 bucket"
@@ -10,7 +11,7 @@
     },
     "recommendations": {
     },
-    "version": "0.1.5",
+    "version": "0.1.7",
     "maintainer": "RightScale, Inc.",
     "long_description": "= DESCRIPTION:\n\nAws recipes and providers.\n\n= ATTRIBUTES:\n\nSee metadata.rb\n\n= USAGE:\n\nDesigned to be run within a RightScale ServerTemplate\n\nBoot Scripts\n* install_dotnet_sdk - Install Amazon Web Services SDK for .NET\n* register_with_elb - Register the instance with an Elastic Load Balancer created in the same ec2 region. Requires recipe: 'aws::install_dotnet_sdk'\n\nDecommission Scripts\n* deregister_from_elb - Deregister the instance with an Elastic Load Balancer created in the same ec2 region. Requires recipe: 'aws::install_dotnet_sdk'\n",
     "description": "Amazon Web Services recipes and providers for Windows",
@@ -20,7 +21,7 @@
     "name": "aws",
     "conflicting": {
     },
-    "license": "Copyright (c) 2010 RightScale, Inc.\n\nAll rights reserved - Do Not Redistribute\n",
+    "license": "Copyright (c) 2010 RightScale, Inc.\n\nPermission is hereby granted, free of charge, to any person obtaining\na copy of this software and associated documentation files (the\n'Software'), to deal in the Software without restriction, including\nwithout limitation the rights to use, copy, modify, merge, publish,\ndistribute, sublicense, and/or sell copies of the Software, and to\npermit persons to whom the Software is furnished to do so, subject to\nthe following conditions:\n\nThe above copyright notice and this permission notice shall be\nincluded in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,\nEXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF\nMERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.\nIN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY\nCLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,\nTORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE\nSOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n\n",
     "providing": {
     },
     "dependencies": {
@@ -61,7 +62,7 @@
         "choice": [
 
         ],
-        "description": "File to be retrieved from the s3 bucket. Ex: app.zip",
+        "description": "File to be retrieved from the s3 bucket. Ex: app.zip or dir/app.zip",
         "display_name": "File",
         "recipes": [
           "aws::download"
@@ -80,7 +81,8 @@
           "aws::register_with_elb",
           "aws::deregister_from_elb",
           "aws::download",
-          "aws::upload"
+          "aws::upload",
+          "aws::terminate_instance"
         ],
         "required": "required"
       },
@@ -110,7 +112,8 @@
           "aws::register_with_elb",
           "aws::deregister_from_elb",
           "aws::download",
-          "aws::upload"
+          "aws::upload",
+          "aws::terminate_instance"
         ],
         "required": "required"
       },

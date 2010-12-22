@@ -28,7 +28,7 @@ $elbName = Get-NewResource elb_name
 $ErrorActionPreference="Stop"
 
 $elb_config = New-Object -TypeName Amazon.ElasticLoadBalancing.AmazonElasticLoadBalancingConfig
-	
+    
 $az = $env:EC2_PLACEMENT_AVAILABILITY_ZONE
 $region = $az.substring(0,$az.length-1)
 
@@ -43,7 +43,7 @@ $client_elb=[Amazon.AWSClientFactory]::CreateAmazonElasticLoadBalancingClient($a
 #Enable the availability zone with the load balancer
 $elb_enable_az_request = New-Object -TypeName Amazon.ElasticLoadBalancing.Model.EnableAvailabilityZonesForLoadBalancerRequest
 
-$elb_enable_az_request.WithAvailabilityZones($az)	
+$elb_enable_az_request.WithAvailabilityZones($az)
 $elb_enable_az_request.WithLoadBalancerName($elbName)
 
 $elb_enable_az_response=$client_elb.EnableAvailabilityZonesForLoadBalancer($elb_enable_az_request)

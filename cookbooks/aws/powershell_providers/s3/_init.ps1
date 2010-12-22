@@ -22,10 +22,10 @@
 $aws_sdk = "AWS SDK for .NET"
 
 #check to see if the package is already installed
-if (Test-Path (${env:programfiles(x86)}+"\"+$aws_sdk)) { 
-  $aws_sdk_path = ${env:programfiles(x86)}+"\"+$aws_sdk 
-} Elseif (Test-Path (${env:programfiles}+"\"+$aws_sdk)) { 
-  $aws_sdk_path = ${env:programfiles}+"\"+$aws_sdk 
+if (Test-Path (${env:programfiles(x86)}+"\"+$aws_sdk)) {
+  $aws_sdk_path = ${env:programfiles(x86)}+"\"+$aws_sdk
+} Elseif (Test-Path (${env:programfiles}+"\"+$aws_sdk)) {
+  $aws_sdk_path = ${env:programfiles}+"\"+$aws_sdk
 }
 
 if ($aws_sdk_path -eq $null) {
