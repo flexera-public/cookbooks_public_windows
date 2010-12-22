@@ -27,13 +27,13 @@ $releasesPath = Get-NewResource releases_path
 $Error.Clear()
 if (($packagePath -eq $NULL) -or ($packagePath -eq ""))
 {
-	Write-Error "Error: provider requires 'package_path' parameter to be set! Ex: 'c:\\tmp\\app.zip'"
-	exit 141
+    Write-Error "Error: provider requires 'package_path' parameter to be set! Ex: 'c:\\tmp\\app.zip'"
+    exit 141
 }
 if (($releasesPath -eq $NULL) -or ($releasesPath -eq ""))
 {
-	Write-Error "Error: provider requires 'root_path' parameter to be set! Ex: 'c:\\inetpub'"
-	exit 142
+    Write-Error "Error: provider requires 'root_path' parameter to be set! Ex: 'c:\\inetpub'"
+    exit 142
 }
 
 #tell the script to "stop" or "continue" when a command fails
@@ -42,8 +42,8 @@ $ErrorActionPreference = "stop"
 $releasesPath = Join-Path $releasesPath ""
 
 if (!(Test-Path $releasesPath)) {
-	Write-Output "Creating directory: $releasesPath"
-	New-Item $releasesPath -type directory 
+    Write-Output "Creating directory: $releasesPath"
+    New-Item $releasesPath -type directory > $null
 }
 
 $deploy_date = $(get-date -uformat "%Y%m%d%H%M%S")
@@ -51,8 +51,8 @@ $deploy_path = Join-Path $releasesPath $deploy_date
 
 if (!(test-path $packagePath))
 {
-	Write-Error "Error: [$packagePath] does not exist. Aborting!"
-	exit 143 
+    Write-Error "Error: [$packagePath] does not exist. Aborting!"
+    exit 143 
 }
 
 Write-Output "Unzpacking [$packagePath] to [$deploy_path]"
@@ -63,12 +63,12 @@ $command_ouput=invoke-expression $command
 
 if ($command_ouput -match 'Everything is Ok')
 {
-	Set-ChefNode releasesunpackpath $deploy_path
+    Set-ChefNode releasesunpackpath $deploy_path
 }
 else
 { 
-	echo $command_ouput
-	Write-Error "Error: Unzipping failed"
-	exit 144
+    echo $command_ouput
+    Write-Error "Error: Unzipping failed"
+    exit 144
 }
 
