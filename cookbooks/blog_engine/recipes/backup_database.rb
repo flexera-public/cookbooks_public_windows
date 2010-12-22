@@ -28,6 +28,7 @@ blog_engine_database "BlogEngine" do
   existing_backup_file_name_pattern @node[:db_sqlserver][:backup][:existing_backup_file_name_pattern]
   server_name @node[:db_sqlserver][:server_name]
   force_restore false
+  max_old_backups_to_keep @node[:db_sqlserver][:backup][:backups_to_keep]
 
   action :backup
 end
