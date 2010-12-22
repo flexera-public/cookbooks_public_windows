@@ -91,7 +91,7 @@ else
 if (!$?)
 {
     Write-Error "Error: SCHTASKS execution failed."
-	exit 138
+    exit 138
 }
 
 #/Query /TN available only in 2008

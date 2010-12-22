@@ -1,3 +1,6 @@
+# Cookbook Name:: utilities
+# Recipe:: online_attached_drives
+#
 # Copyright (c) 2010 RightScale Inc
 #
 # Permission is hereby granted, free of charge, to any person obtaining
@@ -19,27 +22,44 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-# locals.
-$name = Get-NewResource name
+powershell "Change 'Offline' status to 'Online' for the attached drives" do
 
-# "Stop" or "Continue" the powershell script execution when a command fails
-$ErrorActionPreference = "Stop"
+# Create the powershell script
+powershell_script = <<'POWERSHELL_SCRIPT'
+  $diskpart_path = $env:systemroot + '\system32\diskpart.exe'
+  if (!(Test-Path $diskpart_path))
+  {
+    Write-Warning "diskpart.exe is missing, probably 2003 image."
+    exit 0 
+  }
 
-#check inputs.
-$Error.Clear()
-if (($name -eq $NULL) -or ($name -eq ""))
-{
-    Write-Error "Error: 'name' is a required attribute for the 'scheduled_tasks' provider. Aborting..."
-    exit 140
-}
+  $offlinedisks = invoke-expression 'Write-Output "list disk" | diskpart.exe | where {$_ -match "Offline"}'
+  echo "*** Offline disks:[`n$offlinedisks]"
 
-#remove any characters that might brake the command
-$name = $name -replace '[^\w]', ''
+  $offlinediskids=$offlinedisks -replace ".*Disk (\d+).*","`$1"
 
-schtasks.exe /delete /F /TN $name
+  #change disk state from 'Offline' to 'Online' and clear readonly flag
+  echo $offlinediskids | Foreach-Object {
+    if ($_ -match "^\d+$") {
+      $command=@"
+      select disk=$_
+      online disk
+      attributes disk clear readonly
+"@
+      
+      $command | diskpart.exe
+    }
+  }
 
-if (!$?)
-{
-    Write-Error "Error: SCHTASKS execution failed."
-    exit 141
-}
+  Write-Output "*** All disks:" 
+  Write-Output "list disk" | diskpart.exe
+POWERSHELL_SCRIPT
+
+source(powershell_script)
+end
+
+
+
+
+
+
