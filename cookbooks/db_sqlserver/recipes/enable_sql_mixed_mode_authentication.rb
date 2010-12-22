@@ -1,3 +1,6 @@
+# Cookbook Name:: db_sqlserver
+# Recipe:: enable_sql_mixed_mode_authentication
+#
 # Copyright (c) 2010 RightScale Inc
 #
 # Permission is hereby granted, free of charge, to any person obtaining
@@ -19,41 +22,20 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-# locals.
-$dbName = Get-NewResource name
-$scriptPath = Get-NewResource script_path
-$serverName = Get-NewResource server_name
+require 'fileutils'
 
-#check inputs.
-$Error.Clear()
-if (($scriptPath -eq $Null) -or ($scriptPath -eq ""))
-{
-    Write-Error "No SQL commands provided in resource."
-    exit 101
-}
-if (($serverName -eq $Null) -or ($serverName -eq ""))
-{
-    Write-Error "Invalid or missing server name."
-    exit 102
-}
-if (0 -ne $Error.Count)
-{
-    exit 103
-}
-
-$win_path = ([System.IO.FileInfo]$scriptPath).fullname
-
-if (test-path $win_path)
-{
-    Write-Output "*** Running [$win_path] with no schema defined."
-    
-    # Redirect stdout to null
-    sqlcmd -S $serverName -i "$win_path" > $null
-    
-    exit $LastExitCode
-}
+if (@node[:db_sqlserver_enable_sql_mixed_mode_authentication_executed])
+  Chef::Log.info("*** Recipe 'db_sqlserver::enable_sql_mixed_mode_authentication_executed' already executed, skipping...")
 else
-{
-    Write-Error "[$win_path] script is missing."
-    exit 102
-}
+
+  db_sqlserver_database "Run SQL script" do
+    server_name @node[:db_sqlserver][:server_name]
+    script_path File.join(File.dirname(__FILE__), '..', 'files',  'enable_sql_mixed_mode_authentication', 'mssql-script.sql')
+    action :run_script
+  end
+
+  include_recipe 'db_sqlserver::restart_sql_service'
+
+  @node[:db_sqlserver_enable_sql_mixed_mode_authentication_executed] = true
+end
+

@@ -32,8 +32,8 @@ else
   db_sqlserver_database @node[:db_sqlserver][:database_name] do
     server_name @node[:db_sqlserver][:server_name]
     commands ["CREATE USER [NetworkService] FOR LOGIN [NT AUTHORITY\\NETWORK SERVICE]",
-      "EXEC sp_addrolemember 'db_datareader', 'NetworkService'",
-      "EXEC sp_addrolemember 'db_datawriter', 'NetworkService'"]
+              "EXEC sp_addrolemember 'db_datareader', 'NetworkService'",
+              "EXEC sp_addrolemember 'db_datawriter', 'NetworkService'"]
     action :run_command
   end
 

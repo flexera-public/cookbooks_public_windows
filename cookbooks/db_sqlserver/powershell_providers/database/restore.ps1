@@ -28,26 +28,33 @@ $serverName = Get-NewResource server_name
 $backupDirPath = Get-NewResource backup_dir_path
 $forceRestore = Get-NewResource force_restore
 $backupFileNamePattern = (Get-NewResource existing_backup_file_name_pattern) -f $dbName
+$statementTimeoutSeconds = Get-NewResource statement_timeout_seconds
 
 # check if database exists before restoring.
 if (!$forceRestore -and (Get-ChefNode ($nodePath + "exists")))
 {
-    Write-Warning "Not restoring ""$dbName"" because it already exists."
-    exit 0
+    Write-Error "Not restoring ""$dbName"" because it already exists."
+    exit 105
 }
 
 # connect to server.
 $server = New-Object ("Microsoft.SqlServer.Management.Smo.Server") $serverName
+
+# default StatementTimeout to int32 max if undefined
+if (($statementTimeoutSeconds -eq $NULL) -or ($statementTimeoutSeconds -eq ""))
+{
+    $statementTimeoutSeconds = [System.Int32]::MaxValue
+}
+$server.Connectioncontext.StatementTimeout = $statementTimeoutSeconds
 
 # require existing backup directory.
 $backupDir     = Get-Item $backupDirPath -ea Stop
 $backupDirPath = $backupDir.FullName
 Write-Verbose "Using backup directory ""$backupDirPath"""
 
-# select backup file for restore by first match of backup file pattern.
+# select the latest backup file to restore
 $backupFiles = $backupDir.GetFiles($backupFileNamePattern)
-
-if ($backupFile = $backupFiles[0])
+if ($backupFile = $backupFiles[-1])
 {
     # check restore history to see if this revision has already been applied,
     # even if the database was subsequently dropped. this is intended to support
@@ -81,6 +88,13 @@ if ($backupFile = $backupFiles[0])
         exit 100
     }
     $headerDbName = $backupHeader.Rows[0]["DatabaseName"]
+    
+    if("$headerDbName" -eq ""){ 
+        Write-Error "***ERROR: Backup missing DatabaseName from the header." 
+        Write-Output $backupHeader
+        exit 101
+    }
+    
     if ($headerDbName -ne $dbName)
     {
         Write-Error "Name of database read from backup header ""$headerDbName"" does not match ""$dbName""".
@@ -89,7 +103,31 @@ if ($backupFile = $backupFiles[0])
     $restore.Database = $headerDbName
 
     # restore.
-    $restore.SqlRestore($server)
+    start-sleep -seconds 1
+
+        
+    function Resolve-Error ($ErrorRecord=$Error[0])
+    {
+       $ErrorRecord | Format-List * -Force
+       $ErrorRecord.InvocationInfo |Format-List *
+       $Exception = $ErrorRecord.Exception
+       for ($i = 0; $Exception; $i++, ($Exception = $Exception.InnerException))
+       {   "$i" * 80
+           $Exception |Format-List * -Force
+       }
+    }    
+    
+    try {
+        $restore.SqlRestore($server)
+    }
+    catch [System.Exception]
+    {
+        Resolve-Error
+        Write-Error "Failed to restore database named ""$dbName"" from ""$backupFilePath"""
+        exit 105
+    }
+    
+    
     if ($Error.Count -eq 0)
     {
         Write-Output "Restored database named ""$dbName"" from ""$backupFilePath"""

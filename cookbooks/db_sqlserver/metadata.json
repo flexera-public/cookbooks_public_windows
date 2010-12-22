@@ -1,8 +1,13 @@
 {
     "recipes": {
+      "db_sqlserver::create_login": "Creates a login with password",
+      "db_sqlserver::create_user": "Creates a user with read/write permissions to the database",
+      "db_sqlserver::enable_sql_mixed_mode_authentication": "Enables Mixed authentication for the SQL Server",
       "db_sqlserver::restore": "Restores database from a local machine directory.",
       "db_sqlserver::backup_to_s3": "Backs up database to S3.",
       "db_sqlserver::enable_sql_service": "Enables the SQL Server service if disabled",
+      "db_sqlserver::restore_once": "Restores database from a local machine directory. Usually executed on first boot.",
+      "db_sqlserver::restart_sql_service": "Restarts the MSSQL Server",
       "db_sqlserver::default": "Sets up default user and enables SQL service.",
       "db_sqlserver::backup": "Backs up database to a local machine directory.",
       "db_sqlserver::import_dump_from_s3": "Downloads SQL dump from S3 bucket and imports it into database.",
@@ -12,7 +17,7 @@
     },
     "recommendations": {
     },
-    "version": "0.3.8",
+    "version": "0.4.0",
     "maintainer": "RightScale, Inc.",
     "long_description": "= DESCRIPTION:\n\nSQL Server Recipes and Providers\n\n= REQUIREMENTS:\n\nUse on a RightImage which includes SQL Server (2005 or 2008, Express or Standard).\n\n= USAGE:\n\nDesigned to be run within a RightScale ServerTemplate.\n\n",
     "description": "Microsoft SQL Server recipes and providers",
@@ -68,10 +73,10 @@
         "display_name": "Pattern matching backup file names",
         "recipes": [
           "db_sqlserver::default",
-          "db_sqlserver::import_dump_from_s3",
           "db_sqlserver::backup",
           "db_sqlserver::backup_to_s3",
-          "db_sqlserver::restore"
+          "db_sqlserver::restore",
+          "db_sqlserver::restore_once"
         ],
         "required": "optional"
       },
@@ -86,10 +91,10 @@
         "display_name": "Backup file name format",
         "recipes": [
           "db_sqlserver::default",
-          "db_sqlserver::import_dump_from_s3",
           "db_sqlserver::backup",
           "db_sqlserver::backup_to_s3",
-          "db_sqlserver::restore"
+          "db_sqlserver::restore",
+          "db_sqlserver::restore_once"
         ],
         "required": "optional"
       },
@@ -107,7 +112,25 @@
           "db_sqlserver::backup",
           "db_sqlserver::backup_to_s3",
           "db_sqlserver::restore",
-          "db_sqlserver::drop"
+          "db_sqlserver::restore_once",
+          "db_sqlserver::drop",
+          "db_sqlserver::enable_sql_mixed_mode_authentication",
+          "db_sqlserver::create_user",
+          "db_sqlserver::create_login"
+        ],
+        "required": "required"
+      },
+      "db_sqlserver/application_user": {
+        "calculated": false,
+        "type": "string",
+        "choice": [
+
+        ],
+        "description": "The username to be used for read/write access to the database. Ex: dbuser",
+        "display_name": "DB Application user",
+        "recipes": [
+          "db_sqlserver::create_user",
+          "db_sqlserver::create_login"
         ],
         "required": "required"
       },
@@ -137,7 +160,8 @@
         "description": "Whether to force restoring backup on top of any pre-existing database",
         "display_name": "Force restore",
         "recipes": [
-          "db_sqlserver::restore"
+          "db_sqlserver::restore",
+          "db_sqlserver::restore_once"
         ],
         "required": "optional"
       },
@@ -166,11 +190,28 @@
         "display_name": "SQL Server database name",
         "recipes": [
           "db_sqlserver::default",
-          "db_sqlserver::import_dump_from_s3",
           "db_sqlserver::backup",
           "db_sqlserver::backup_to_s3",
           "db_sqlserver::restore",
-          "db_sqlserver::drop"
+          "db_sqlserver::restore_once",
+          "db_sqlserver::drop",
+          "db_sqlserver::enable_sql_mixed_mode_authentication",
+          "db_sqlserver::create_user",
+          "db_sqlserver::create_login"
+        ],
+        "required": "required"
+      },
+      "db_sqlserver/backup/backups_to_keep": {
+        "calculated": false,
+        "type": "string",
+        "choice": [
+
+        ],
+        "description": "Defines the number of old backups to keep. Ex: 30",
+        "display_name": "Old backups to keep",
+        "recipes": [
+          "db_sqlserver::backup",
+          "db_sqlserver::backup_to_s3"
         ],
         "required": "required"
       },
@@ -186,7 +227,8 @@
         "recipes": [
           "db_sqlserver::backup",
           "db_sqlserver::backup_to_s3",
-          "db_sqlserver::restore"
+          "db_sqlserver::restore",
+          "db_sqlserver::restore_once"
         ],
         "required": "optional"
       },
@@ -201,6 +243,20 @@
         "recipes": [
           "db_sqlserver::default",
           "db_sqlserver::import_dump_from_s3"
+        ],
+        "required": "required"
+      },
+      "db_sqlserver/application_pass": {
+        "calculated": false,
+        "type": "string",
+        "choice": [
+
+        ],
+        "description": "The password to be used for read/write access to the database. Ex: dbpass",
+        "display_name": "DB Application pass",
+        "recipes": [
+          "db_sqlserver::create_user",
+          "db_sqlserver::create_login"
         ],
         "required": "required"
       }

@@ -1,3 +1,6 @@
+# Cookbook Name:: db_sqlserver
+# Recipe:: restart_sql_service
+#
 # Copyright (c) 2010 RightScale Inc
 #
 # Permission is hereby granted, free of charge, to any person obtaining
@@ -19,41 +22,33 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-# locals.
-$dbName = Get-NewResource name
-$scriptPath = Get-NewResource script_path
-$serverName = Get-NewResource server_name
+# enable the SQL service
+powershell "Restart the MSSQL Server" do
+  # Create the powershell script
+  powershell_script = <<'POWERSHELL_SCRIPT'
+    $sqlServiceName='MSSQL$SQLEXPRESS'
+    $serviceController = get-service $sqlServiceName 2> $null
+    if ($Null -eq $serviceController)
+    {
+        $sqlServiceName='MSSQLSERVER'
+        $serviceController = get-service $sqlServiceName 2> $null
+        if ($Null -eq $serviceController)
+        {
+            Write-Error "SQL Server service is not installed"
+            exit 110
+        }
+    }
 
-#check inputs.
-$Error.Clear()
-if (($scriptPath -eq $Null) -or ($scriptPath -eq ""))
-{
-    Write-Error "No SQL commands provided in resource."
-    exit 101
-}
-if (($serverName -eq $Null) -or ($serverName -eq ""))
-{
-    Write-Error "Invalid or missing server name."
-    exit 102
-}
-if (0 -ne $Error.Count)
-{
-    exit 103
-}
+    if ($serviceController.Status -eq "Stopped")
+    {
+       net start $sqlServiceName
+    }
+    else
+    {
+        net stop $sqlServiceName
+        net start $sqlServiceName
+    }
+POWERSHELL_SCRIPT
 
-$win_path = ([System.IO.FileInfo]$scriptPath).fullname
-
-if (test-path $win_path)
-{
-    Write-Output "*** Running [$win_path] with no schema defined."
-    
-    # Redirect stdout to null
-    sqlcmd -S $serverName -i "$win_path" > $null
-    
-    exit $LastExitCode
-}
-else
-{
-    Write-Error "[$win_path] script is missing."
-    exit 102
-}
+  source(powershell_script)
+end

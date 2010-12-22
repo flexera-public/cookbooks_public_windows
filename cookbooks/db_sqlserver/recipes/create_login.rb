@@ -1,3 +1,6 @@
+# Cookbook Name:: db_sqlserver
+# Recipe:: create_login
+#
 # Copyright (c) 2010 RightScale Inc
 #
 # Permission is hereby granted, free of charge, to any person obtaining
@@ -19,41 +22,17 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-# locals.
-$dbName = Get-NewResource name
-$scriptPath = Get-NewResource script_path
-$serverName = Get-NewResource server_name
-
-#check inputs.
-$Error.Clear()
-if (($scriptPath -eq $Null) -or ($scriptPath -eq ""))
-{
-    Write-Error "No SQL commands provided in resource."
-    exit 101
-}
-if (($serverName -eq $Null) -or ($serverName -eq ""))
-{
-    Write-Error "Invalid or missing server name."
-    exit 102
-}
-if (0 -ne $Error.Count)
-{
-    exit 103
-}
-
-$win_path = ([System.IO.FileInfo]$scriptPath).fullname
-
-if (test-path $win_path)
-{
-    Write-Output "*** Running [$win_path] with no schema defined."
-    
-    # Redirect stdout to null
-    sqlcmd -S $serverName -i "$win_path" > $null
-    
-    exit $LastExitCode
-}
+if (@node[:db_sqlserver_create_login_executed])
+  Chef::Log.info("*** Recipe 'db_sqlserver::create_login' already executed, skipping...")
 else
-{
-    Write-Error "[$win_path] script is missing."
-    exit 102
-}
+  # Create login
+  db_sqlserver_database @node[:db_sqlserver][:database_name] do
+    server_name @node[:db_sqlserver][:server_name]
+    commands ["CREATE LOGIN "+@node[:db_sqlserver][:application_user]+" WITH PASSWORD = '"+@node[:db_sqlserver][:application_pass]+"';",
+              "ALTER LOGIN "+@node[:db_sqlserver][:application_user]+" WITH CHECK_EXPIRATION = OFF;",
+              "ALTER LOGIN "+@node[:db_sqlserver][:application_user]+" WITH CHECK_POLICY = OFF;"]
+    action :run_command
+  end
+
+  @node[:db_sqlserver_create_login_executed] = true
+end

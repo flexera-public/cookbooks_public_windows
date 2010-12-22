@@ -32,6 +32,7 @@ db_sqlserver_database @node[:db_sqlserver][:database_name] do
   server_name @node[:db_sqlserver][:server_name]
   force_restore false
   zip_backup false
+  max_old_backups_to_keep @node[:db_sqlserver][:backup][:backups_to_keep]
 
   action :backup
 end

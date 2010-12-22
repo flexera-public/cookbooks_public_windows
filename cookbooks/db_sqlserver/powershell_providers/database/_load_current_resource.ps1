@@ -58,7 +58,7 @@ if ($db)
 
     # get the list of backup files applied to this server
     $command = "SELECT [bmf].[physical_device_name] AS restore_file_path
-		FROM msdb..restorehistory rs
+        FROM msdb..restorehistory rs
                   INNER JOIN msdb..backupset bs ON [rs].[backup_set_id] = [bs].[backup_set_id]
                   INNER JOIN msdb..backupmediafamily bmf ON [bs].[media_set_id] = [bmf].[media_set_id]
                 WHERE rs.destination_database_name = '{0}'" -f $dbName
@@ -70,8 +70,8 @@ if ($db)
     $restoreFilePaths = @{}
     foreach ($table in $resultSet.Tables)
     {
-	foreach ($row in $table.Rows)
-    	{
+        foreach ($row in $table.Rows)
+        {
             $restoreFilePath = $row.Item("restore_file_path")
             if ("$restoreFilePath" -ne "")
             {
@@ -85,7 +85,7 @@ if ($db)
                     $restoreFilePaths.($restoreFileName.ToLower()) = $restoreFilePath
                 }
             }
-    	}
+        }
     }
     Set-ChefNode ($nodePath + "restore_file_paths") -HashValue $restoreFilePaths
 }

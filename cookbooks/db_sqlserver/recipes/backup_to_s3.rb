@@ -32,6 +32,8 @@ db_sqlserver_database @node[:db_sqlserver][:database_name] do
   force_restore false
   zip_backup true
   delete_sql_after_zip false
+  max_old_backups_to_keep @node[:db_sqlserver][:backup][:backups_to_keep]
+  
   action :backup
 end
 
@@ -42,7 +44,7 @@ aws_s3 "upload the latest backup to the s3 bucket" do
   s3_bucket @node[:s3][:bucket_backups]
   # when file_path is a directory, the latest file in the directory will be uploaded
   file_path @node[:db_sqlserver][:backup][:database_backup_dir]
-  # increase default timeout to 30 minutes. Default is 20(1200 seconds)
-  timeout_seconds 1800
+  # increase default timeout to 60 minutes. Default is 20(1200 seconds)
+  timeout_seconds 3600
   action :put
 end
