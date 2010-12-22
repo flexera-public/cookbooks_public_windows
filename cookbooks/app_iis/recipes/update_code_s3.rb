@@ -22,7 +22,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-# download the sql dump
+# download the code from s3
 aws_s3 "Download code from S3 bucket" do
   access_key_id @node[:aws][:access_key_id]
   secret_access_key @node[:aws][:secret_access_key]
