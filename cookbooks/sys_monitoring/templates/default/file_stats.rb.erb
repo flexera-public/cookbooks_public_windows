@@ -1,0 +1,56 @@
+#
+# Copyright (c) 2010 RightScale Inc
+#
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to
+# the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+# Collect and send file statistics
+#
+def run
+  paths='<%= @node[:sys_monitoring][:monitor_files] %>'.gsub(/\\/, '/').split(' ')
+  paths.each_index do |index|
+    files=Dir.glob(paths[index])
+      if files.length == 0
+        @logger.debug("No files matched pattern #{paths[index]}")
+      else
+        if files.length == 1
+          min_file_age = Time.now - File.stat(files[0]).mtime
+          min_file_size = File.size(files[0])
+          min_file_name = File.basename(files[0])
+        else
+          #multiple files match the pattern. Picking the latest modified file
+          min_file_age = Time.now - File.stat(files[0]).mtime
+          min_file_size = File.size(files[0])
+          min_file_name = "latest-match-"+index.to_s
+          files.delete(files[0])
+
+          files.each_index do |i| 
+            current_file_age=Time.now - File.stat(files[i]).mtime
+            if (current_file_age < min_file_age)
+              min_file_age = current_file_age
+              min_file_size = File.size(files[i])
+            end
+          end
+        end
+        @logger.debug("Age=#{min_file_age.to_i}, Size=#{min_file_size.to_i} for #{min_file_name}")
+        gauge('file-'+min_file_name, '', 'gauge', "age", min_file_age.to_i)
+        gauge('file-'+min_file_name, '', 'gauge', "size", min_file_size.to_i)
+    end
+  end
+end

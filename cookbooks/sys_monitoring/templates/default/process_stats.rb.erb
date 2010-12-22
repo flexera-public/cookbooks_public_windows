@@ -1,0 +1,54 @@
+#
+# Copyright (c) 2010 RightScale Inc
+#
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to
+# the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+# Collect and send process data
+#
+# === Return
+# true:: Always return true
+def run
+  monitor_processes='<%= @node[:sys_monitoring][:monitor_processes] %>'
+
+  processes_hash = Hash.new {|h,k| h[k]={}};
+  where_query=""
+  for process in monitor_processes.split(" ") do
+    processes_hash[process.downcase]["count"] = 0;
+    processes_hash[process.downcase]["threads"] = 0;
+    where_query+=" or " if processes_hash.length>1;
+    where_query+="name='"+process+"'"
+  end
+
+  if processes_hash.length > 0
+    processes = execute_wmi_query("select Name,ThreadCount,ProcessID from win32_process where "+where_query)
+    for process in processes do
+      processes_hash[process.Name.downcase]["count"] += 1;
+      processes_hash[process.Name.downcase]["threads"] += process.ThreadCount;
+      puts
+    end
+
+    processes_hash.each_key do |key|
+      @logger.debug("Sending ps_count=#{processes_hash[key]["count"].to_s} and thread_count=#{processes_hash[key]["threads"].to_s} for process: #{key}")
+      gauge('processes-'+key, '', 'ps_count', '', [processes_hash[key]["count"], processes_hash[key]["threads"]])
+    end
+  else
+    @logger.debug("No processes to monitor")
+  end
+end

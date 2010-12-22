@@ -1,12 +1,15 @@
 {
     "recipes": {
+      "sys_monitoring::add_file_stats": "Monitors file size and last modified time in seconds",
+      "sys_monitoring::add_iis_stats": "Monitors IIS stats",
+      "sys_monitoring::add_process_stats": "Monitors process and thread count",
       "sys_monitoring::default": "Install monitoring plugin"
     },
     "groupings": {
     },
     "recommendations": {
     },
-    "version": "0.3.13",
+    "version": "0.3.15",
     "maintainer": "RightScale, Inc.",
     "long_description": "= DESCRIPTION:\n\nEnable monitoring\n\n= USAGE:\n\nAdd to ServerTemplate to enable monitoring on instances using it.\n\nBoot Scripts\n  * default - Install monitoring plugin\n",
     "description": "Send collectd data to RightScale",
@@ -16,7 +19,7 @@
     "name": "sys_monitoring",
     "conflicting": {
     },
-    "license": "Copyright (c) 2010 RightScale, Inc.\n\nAll rights reserved - Do Not Redistribute\n",
+    "license": "Copyright (c) 2010 RightScale, Inc.\n\nPermission is hereby granted, free of charge, to any person obtaining\na copy of this software and associated documentation files (the\n'Software'), to deal in the Software without restriction, including\nwithout limitation the rights to use, copy, modify, merge, publish,\ndistribute, sublicense, and/or sell copies of the Software, and to\npermit persons to whom the Software is furnished to do so, subject to\nthe following conditions:\n\nThe above copyright notice and this permission notice shall be\nincluded in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,\nEXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF\nMERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.\nIN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY\nCLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,\nTORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE\nSOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n\n",
     "providing": {
     },
     "dependencies": {
@@ -24,6 +27,32 @@
     "platforms": {
     },
     "attributes": {
+      "sys_monitoring/monitor_processes": {
+        "calculated": false,
+        "type": "string",
+        "choice": [
+
+        ],
+        "description": "A space separated list of processes to monitor process and thread count. Ex: winlogon.exe cmd.exe",
+        "display_name": "Monitor processes",
+        "recipes": [
+          "sys_monitoring::add_process_stats"
+        ],
+        "required": "required"
+      },
+      "sys_monitoring/monitor_files": {
+        "calculated": false,
+        "type": "string",
+        "choice": [
+
+        ],
+        "description": "A space separated list of files to be monitored. Full paths are required and patterns are accepted also. If a pattern matches more than one file, the latest modified file will be used. Ex: c:\\tmp\\a.txt d:\\backups\\mydb.*bak",
+        "display_name": "Monitor files",
+        "recipes": [
+          "sys_monitoring::add_file_stats"
+        ],
+        "required": "required"
+      }
     },
     "replacing": {
     }
