@@ -47,6 +47,9 @@ powershell "Enable the SQL service" do
         $message = "$sqlServiceName service is already " + $serviceController.Status
         Write-Output $message
     }
+
+    # Exit with a smile
+    exit 0
 POWERSHELL_SCRIPT
 
   source(powershell_script)
