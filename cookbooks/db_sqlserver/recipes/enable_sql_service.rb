@@ -16,7 +16,6 @@ powershell "Enable the SQL service" do
     } else {
       $sqlServiceName='MSSQLSERVER'
     }
-    $sqlServiceName='MSSQLSERVER'
     $serviceController = get-service $sqlServiceName -ErrorAction SilentlyContinue
     if ($serviceController -eq $Null)
     {
