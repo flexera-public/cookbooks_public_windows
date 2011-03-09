@@ -11,17 +11,16 @@ powershell "Enable the SQL service" do
   powershell_script = <<'POWERSHELL_SCRIPT'
     #tell the script to "stop" or "continue" when a command fails
     $ErrorActionPreference = "stop"
-    $sqlServiceName='MSSQL$SQLEXPRESS'
+    if (get-service | findstr 'MSSQL\$SQLEXPRESS') {
+      $sqlServiceName='MSSQL$SQLEXPRESS'
+    } else {
+      $sqlServiceName='MSSQLSERVER'
+    }
     $serviceController = get-service $sqlServiceName -ErrorAction SilentlyContinue
     if ($serviceController -eq $Null)
     {
-        $sqlServiceName='MSSQLSERVER'
-        $serviceController = get-service $sqlServiceName -ErrorAction SilentlyContinue
-        if ($serviceController -eq $Null)
-        {
-            Write-Error "SQL Server service is not installed"
-            exit 100
-        }
+        Write-Error "SQL Server service is not installed"
+        exit 100
     }
 
     if ($serviceController.Status -eq "Stopped")
@@ -47,6 +46,9 @@ powershell "Enable the SQL service" do
         $message = "$sqlServiceName service is already " + $serviceController.Status
         Write-Output $message
     }
+
+    # Exit with a smile
+    exit 0
 POWERSHELL_SCRIPT
 
   source(powershell_script)
