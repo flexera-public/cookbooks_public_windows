@@ -3,10 +3,11 @@ maintainer_email "support@rightscale.com"
 license          IO.read(File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'LICENSE')))
 description      "Install and configure the BlogEngine application, see http://www.dotnetblogengine.net"
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.rdoc'))
-version          "0.3.17"
+version          "0.3.18"
 
 depends 'utilities'
 depends 'sys_monitoring'
+depends 'db_sqlserver'
 
 recipe 'blog_engine::default', 'Loads the database and installs the BlogEngine application as the default IIS site'
 recipe "blog_engine::backup_database", "Backs up the BlogEngine database to a local machine directory."

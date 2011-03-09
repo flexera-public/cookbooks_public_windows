@@ -3,8 +3,9 @@ maintainer_email "support@rightscale.com"
 license          IO.read(File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'LICENSE')))
 description      "Microsoft SQL Server recipes and providers"
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.rdoc'))
-version          "0.4.0"
+version          "0.4.1"
 
+depends 'aws'
 
 recipe 'db_sqlserver::default', 'Sets up default user and enables SQL service.'
 recipe "db_sqlserver::backup", "Backs up database to a local machine directory."
@@ -61,7 +62,7 @@ attribute "db_sqlserver/restore/force_restore",
   :recipes => ["db_sqlserver::restore", "db_sqlserver::restore_once"],
   :choice => ['true', 'false'],
   :default => "false"
-  
+
 attribute "db_sqlserver/application_user",
   :display_name => "DB Application user",
   :description => "The username to be used for read/write access to the database. Ex: dbuser",
@@ -91,13 +92,13 @@ attribute "s3/bucket_backups",
   :description => "The name of the S3 bucket. Ex: production-bucket-backup",
   :recipes => ["db_sqlserver::backup_to_s3"],
   :required => "required"
-  
+
 attribute "aws/access_key_id",
   :display_name => "Access Key Id",
   :description => "This is an Amazon credential. Log in to your AWS account at aws.amazon.com to retrieve you access identifiers. Ex: 1JHQQ4KVEVM02KVEVM02",
   :recipes => ["db_sqlserver::default", "db_sqlserver::import_dump_from_s3", "db_sqlserver::backup_to_s3"],
   :required => "required"
-  
+
 attribute "aws/secret_access_key",
   :display_name => "Secret Access Key",
   :description => "This is an Amazon credential. Log in to your AWS account at aws.amazon.com to retrieve your access identifiers. Ex: XVdxPgOM4auGcMlPz61IZGotpr9LzzI07tT8s2Ws",

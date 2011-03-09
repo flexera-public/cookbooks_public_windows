@@ -3,9 +3,10 @@ maintainer_email "support@rightscale.com"
 license          IO.read(File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'LICENSE')))
 description      "IIS recipes"
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.rdoc'))
-version          "0.0.5"
+version          "0.0.6"
 
 depends 'aws'
+depends 'code_checkout'
 
 recipe "app_iis::default", "Calls app_iis::update_code_svn"
 recipe "app_iis::update_code_svn", "Retrieves code from SVN then sets up website."
@@ -38,20 +39,20 @@ attribute "svn/force_checkout",
   :recipes => ["app_iis::update_code_svn"],
   :choice => ['true', 'false'],
   :required => "required"
-  
-  
+
+
 attribute "aws/access_key_id",
   :display_name => "Access Key Id",
   :description => "This is an Amazon credential. Log in to your AWS account at aws.amazon.com to retrieve you access identifiers. Ex: 1JHQQ4KVEVM02KVEVM02",
   :recipes => ["app_iis::update_code_s3"],
   :required => "required"
-  
+
 attribute "aws/secret_access_key",
   :display_name => "Secret Access Key",
   :description => "This is an Amazon credential. Log in to your AWS account at aws.amazon.com to retrieve your access identifiers. Ex: XVdxPgOM4auGcMlPz61IZGotpr9LzzI07tT8s2Ws",
   :recipes => ["app_iis::update_code_s3"],
   :required => "required"
-  
+
 attribute "s3/application_code_package",
   :display_name => "Application Package",
   :description => "The name of the application package that can be retrieved from the S3 bucket. Ex: productioncode.zip",
