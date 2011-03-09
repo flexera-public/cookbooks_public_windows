@@ -3,13 +3,12 @@ maintainer_email "support@rightscale.com"
 license          IO.read(File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'LICENSE')))
 description      "Windows Admin recipes and providers"
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.rdoc'))
-version          "0.3.3"
+version          "0.3.4"
 
 recipe "utilities::default", "Not yet implemented"
 recipe "utilities::change_admin_password", "Changes the administrator password"
 recipe "utilities::system_reboot", "Reboots the system"
 recipe "utilities::system_shutdown", "Shuts down the system"
-recipe "utilities::install_firefox", "Installs Mozilla Firefox 3.6"
 recipe "utilities::install_7zip", "Installs 7-Zip"
 recipe "utilities::create_scheduled_task", "Creates the 'rs_scheduled_task' scheduled task under the 'administrator' user. Uses the SCHTASKS Windows command"
 recipe "utilities::delete_scheduled_task", "Deletes the 'rs_scheduled_task' scheduled task under the 'administrator' user. Uses the SCHTASKS Windows command"
