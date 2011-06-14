@@ -16,7 +16,7 @@ define :app_iis_update_code_svn, :repo_path => nil,
        :svn_username => nil,
        :svn_password => nil,
        :svn_force_checkout => true,
-       :releases_dir => nil do
+       :releases_dir => "C:/inetpub/releases" do
 
   code_checkout_svn params[:repo_path] do
     releases_path params[:releases_dir]
