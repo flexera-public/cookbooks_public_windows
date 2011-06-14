@@ -1,146 +1,169 @@
 {
-    "conflicting": {
-    },
-    "platforms": {
-    },
-    "providing": {
-    },
-    "description": "IIS recipes",
-    "replacing": {
-    },
-    "attributes": {
-      "s3/application_code_package": {
-        "required": "required",
-        "calculated": false,
-        "choice": [
-
-        ],
-        "type": "string",
-        "recipes": [
-          "app_iis::update_code_s3"
-        ],
-        "description": "The name of the application package that can be retrieved from the S3 bucket. Ex: productioncode.zip",
-        "display_name": "Application Package"
-      },
-      "s3/application_code_bucket": {
-        "required": "required",
-        "calculated": false,
-        "choice": [
-
-        ],
-        "type": "string",
-        "recipes": [
-          "app_iis::update_code_s3"
-        ],
-        "description": "The S3 bucket, where the application can be retrieved. Ex: production-code-bucket",
-        "display_name": "Application Bucket"
-      },
-      "svn/password": {
-        "required": "optional",
-        "calculated": false,
-        "default": "",
-        "choice": [
-
-        ],
-        "type": "string",
-        "recipes": [
-          "app_iis::update_code_svn"
-        ],
-        "description": "The SVN password that is used to checkout the application code from SVN repository.",
-        "display_name": "SVN Password"
-      },
-      "aws/secret_access_key": {
-        "required": "required",
-        "calculated": false,
-        "choice": [
-
-        ],
-        "type": "string",
-        "recipes": [
-          "app_iis::update_code_s3"
-        ],
-        "description": "This is an Amazon credential. Log in to your AWS account at aws.amazon.com to retrieve your access identifiers. Ex: XVdxPgOM4auGcMlPz61IZGotpr9LzzI07tT8s2Ws",
-        "display_name": "Secret Access Key"
-      },
-      "aws/access_key_id": {
-        "required": "required",
-        "calculated": false,
-        "choice": [
-
-        ],
-        "type": "string",
-        "recipes": [
-          "app_iis::update_code_s3"
-        ],
-        "description": "This is an Amazon credential. Log in to your AWS account at aws.amazon.com to retrieve you access identifiers. Ex: 1JHQQ4KVEVM02KVEVM02",
-        "display_name": "Access Key Id"
-      },
-      "svn/username": {
-        "required": "optional",
-        "calculated": false,
-        "default": "",
-        "choice": [
-
-        ],
-        "type": "string",
-        "recipes": [
-          "app_iis::update_code_svn"
-        ],
-        "description": "The SVN username that is used to checkout the application code from SVN repository",
-        "display_name": "SVN Username"
-      },
-      "svn/repo_path": {
-        "required": "required",
-        "calculated": false,
-        "choice": [
-
-        ],
-        "type": "string",
-        "recipes": [
-          "app_iis::update_code_svn"
-        ],
-        "description": "The URL of your SVN repository where your application code will be checked out from.  Ex: http://mysvn.net/app/",
-        "display_name": "SVN Repo Path"
-      },
-      "svn/force_checkout": {
-        "required": "required",
-        "calculated": false,
-        "choice": [
-          "true",
-          "false"
-        ],
-        "type": "string",
-        "recipes": [
-          "app_iis::update_code_svn"
-        ],
-        "description": "A value of 'false' will attempt an svn update where 'true' will do a full checkout",
-        "display_name": "SVN Force Checkout"
-      }
-    },
-    "groupings": {
-    },
-    "dependencies": {
-      "code_checkout": [
+  "dependencies": {
+    "code_checkout": ">= 0.0.0",
+    "aws": ">= 0.0.0"
+  },
+  "name": "app_iis",
+  "maintainer_email": "support@rightscale.com",
+  "attributes": {
+    "s3/application_code_package": {
+      "required": "required",
+      "calculated": false,
+      "choice": [
 
       ],
-      "aws": [
+      "type": "string",
+      "recipes": [
+        "app_iis::update_code_s3",
+        "app_iis::deploy_code_s3"
+      ],
+      "display_name": "Application Package",
+      "description": "The name of the application package that can be retrieved from the S3 bucket. Ex: productioncode.zip"
+    },
+    "app_iis/releases_dir": {
+      "required": "optional",
+      "calculated": false,
+      "choice": [
 
-      ]
+      ],
+      "default": "C:/inetpub/releases",
+      "type": "string",
+      "recipes": [
+        "app_iis::update_code_svn",
+        "app_iis::deploy_code_svn",
+        "app_iis::update_code_s3",
+        "app_iis::deploy_code_s3"
+      ],
+      "display_name": "IIS Releases Dir",
+      "description": "The full directory path where code will be deployed and updated"
     },
-    "long_description": "= DESCRIPTION:\n\nWindows IIS recipes\n\n= REQUIREMENTS:\n\n\n= ATTRIBUTES: \n\nSee metadata.rb\n\n= USAGE:\n\nDesigned to be run within a RightScale ServerTemplate\n",
-    "version": "0.0.6",
-    "recommendations": {
+    "s3/application_code_bucket": {
+      "required": "required",
+      "calculated": false,
+      "choice": [
+
+      ],
+      "type": "string",
+      "recipes": [
+        "app_iis::update_code_s3",
+        "app_iis::deploy_code_s3"
+      ],
+      "display_name": "Application Bucket",
+      "description": "The S3 bucket, where the application can be retrieved. Ex: production-code-bucket"
     },
-    "recipes": {
-      "app_iis::default": "Calls app_iis::update_code_svn",
-      "app_iis::start_default_website": "Starts the website named 'Default Web Site' if it is not already running",
-      "app_iis::update_code_s3": "Retrieves code from s3 then sets up website.",
-      "app_iis::update_code_svn": "Retrieves code from SVN then sets up website."
+    "svn/password": {
+      "required": "optional",
+      "calculated": false,
+      "choice": [
+
+      ],
+      "default": "",
+      "type": "string",
+      "recipes": [
+        "app_iis::update_code_svn",
+        "app_iis::deploy_code_svn"
+      ],
+      "display_name": "SVN Password",
+      "description": "The SVN password that is used to checkout the application code from SVN repository."
     },
-    "maintainer": "RightScale, Inc.",
-    "name": "app_iis",
-    "suggestions": {
+    "aws/secret_access_key": {
+      "required": "required",
+      "calculated": false,
+      "choice": [
+
+      ],
+      "type": "string",
+      "recipes": [
+        "app_iis::update_code_s3",
+        "app_iis::deploy_code_s3"
+      ],
+      "display_name": "Secret Access Key",
+      "description": "This is an Amazon credential. Log in to your AWS account at aws.amazon.com to retrieve your access identifiers. Ex: XVdxPgOM4auGcMlPz61IZGotpr9LzzI07tT8s2Ws"
     },
-    "license": "Copyright (c) 2010 RightScale, Inc.\n\nPermission is hereby granted, free of charge, to any person obtaining\na copy of this software and associated documentation files (the\n'Software'), to deal in the Software without restriction, including\nwithout limitation the rights to use, copy, modify, merge, publish,\ndistribute, sublicense, and/or sell copies of the Software, and to\npermit persons to whom the Software is furnished to do so, subject to\nthe following conditions:\n\nThe above copyright notice and this permission notice shall be\nincluded in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,\nEXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF\nMERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.\nIN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY\nCLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,\nTORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE\nSOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n\n",
-    "maintainer_email": "support@rightscale.com"
+    "aws/access_key_id": {
+      "required": "required",
+      "calculated": false,
+      "choice": [
+
+      ],
+      "type": "string",
+      "recipes": [
+        "app_iis::update_code_s3",
+        "app_iis::deploy_code_s3"
+      ],
+      "display_name": "Access Key Id",
+      "description": "This is an Amazon credential. Log in to your AWS account at aws.amazon.com to retrieve you access identifiers. Ex: 1JHQQ4KVEVM02KVEVM02"
+    },
+    "svn/username": {
+      "required": "optional",
+      "calculated": false,
+      "choice": [
+
+      ],
+      "default": "",
+      "type": "string",
+      "recipes": [
+        "app_iis::update_code_svn",
+        "app_iis::deploy_code_svn"
+      ],
+      "display_name": "SVN Username",
+      "description": "The SVN username that is used to checkout the application code from SVN repository"
+    },
+    "svn/repo_path": {
+      "required": "required",
+      "calculated": false,
+      "choice": [
+
+      ],
+      "type": "string",
+      "recipes": [
+        "app_iis::update_code_svn",
+        "app_iis::deploy_code_svn"
+      ],
+      "display_name": "SVN Repo Path",
+      "description": "The URL of your SVN repository where your application code will be checked out from.  Ex: http://mysvn.net/app/"
+    },
+    "svn/force_checkout": {
+      "required": "required",
+      "calculated": false,
+      "choice": [
+        "true",
+        "false"
+      ],
+      "type": "string",
+      "recipes": [
+        "app_iis::update_code_svn",
+        "app_iis::deploy_code_svn"
+      ],
+      "display_name": "SVN Force Checkout",
+      "description": "A value of 'false' will attempt an svn update where 'true' will do a full checkout"
+    }
+  },
+  "license": "Copyright (c) 2010 RightScale, Inc.\n\nPermission is hereby granted, free of charge, to any person obtaining\na copy of this software and associated documentation files (the\n'Software'), to deal in the Software without restriction, including\nwithout limitation the rights to use, copy, modify, merge, publish,\ndistribute, sublicense, and/or sell copies of the Software, and to\npermit persons to whom the Software is furnished to do so, subject to\nthe following conditions:\n\nThe above copyright notice and this permission notice shall be\nincluded in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,\nEXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF\nMERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.\nIN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY\nCLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,\nTORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE\nSOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n\n",
+  "suggestions": {
+  },
+  "platforms": {
+  },
+  "maintainer": "RightScale, Inc.",
+  "long_description": "= DESCRIPTION:\n\nWindows IIS recipes\n\n= REQUIREMENTS:\n\n\n= ATTRIBUTES: \n\nSee metadata.rb\n\n= USAGE:\n\nDesigned to be run within a RightScale ServerTemplate\n",
+  "version": "0.0.6",
+  "recommendations": {
+  },
+  "recipes": {
+    "app_iis::default": "Calls app_iis::update_code_svn",
+    "app_iis::start_default_website": "Starts the website named 'Default Web Site' if it is not already running",
+    "app_iis::deploy_code_s3": "Retrieves code from s3 and sets up the website only if the code has not already been deployed",
+    "app_iis::deploy_code_svn": "Retrieves code from SVN and sets up the website only if the code has not already been deployed",
+    "app_iis::update_code_s3": "Retrieves the latest code from s3 then sets up website.",
+    "app_iis::update_code_svn": "Retrieves the latest code from SVN then sets up website."
+  },
+  "groupings": {
+  },
+  "conflicting": {
+  },
+  "replacing": {
+  },
+  "description": "IIS recipes",
+  "providing": {
   }
+}

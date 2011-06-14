@@ -22,62 +22,10 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-# download the code from s3
-aws_s3 "Download code from S3 bucket" do
-  access_key_id @node[:aws][:access_key_id]
-  secret_access_key @node[:aws][:secret_access_key]
-  s3_bucket @node[:s3][:application_code_bucket]
-  s3_file @node[:s3][:application_code_package]
-  download_dir "c:/tmp"
-  action :get
-end
-
-
-# Unpack code in c:\inetpub\releases
-code_checkout_package "Unpacking code in the releases directory" do
-  releases_path "c:/inetpub/releases"
-  package_path "c:/tmp/"+@node[:s3][:application_code_package]
-  action :unpack
-end
-
-
-powershell "Change IIS physical path for Default Website" do
-  # Create the powershell script
-  powershell_script = <<'POWERSHELL_SCRIPT'
-  #tell the script to "stop" or "continue" when a command fails
-  $ErrorActionPreference = "stop"
-
-  $releasesunpackpath=invoke-expression 'Get-ChefNode releasesunpackpath'
-  
-  if (Test-Path $releasesunpackpath -PathType Container)
-  {
-  
-      # change the physicalPath for the IIS site
-      $appcmd_path = $env:systemroot + "\\system32\\inetsrv\\APPCMD.exe"
-      if (Test-Path $appcmd_path)
-      {
-        &$appcmd_path set SITE "Default Web Site" "/[path='/'].[path='/'].physicalPath:$releasesunpackpath"
-      }
-      else
-      {
-        Write-Output "APPCMD.EXE is missing, probably 2003 image. Trying ADSI" 
-        
-        $siteName = "Default Web Site"
-        $iis = [ADSI]"IIS://localhost/W3SVC"
-        $site = $iis.psbase.children | where { $_.keyType -eq "IIsWebServer" -AND $_.ServerComment -eq $siteName }
-        $path = [ADSI]($site.psbase.path+"/ROOT")
-        $path.psbase.properties.path[0] = $releasesunpackpath
-        #DefaultDoc cannot be configured in web.config for IIS6
-        $path.psbase.properties.DefaultDoc[0]="default.aspx,index.aspx,Default.htm,Default.asp,index.html,index.htm,iisstart.htm,index.php"
-        $path.psbase.CommitChanges()
-      }
-  }
-  else
-  {
-    Write-Error "Error: Invalid physical path [$releasesunpackpath]" 
-    exit 135
-  }
-POWERSHELL_SCRIPT
-
-  source(powershell_script)
+app_iis_update_code_s3 "Download Code & Configure IIS" do
+  access_key_id node[:aws][:access_key_id]
+  secret_access_key node[:aws][:secret_access_key]
+  application_code_bucket node[:s3][:application_code_bucket]
+  application_code_package node[:s3][:application_code_package]
+  releases_dir node[:app_iis][:releases_dir]
 end
